@@ -1,0 +1,357 @@
+<title>Wilyer Abreu Hitter Profile</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: a scouting-report spread. Masthead, percentile card, then each section as
+   prose on the left and its exhibit (table or chart) on the right; stacks on phones. */
+:root {
+  --bg: #f4f5f7; --paper: #ffffff; --ink: #15181e; --muted: #5b6270; --rule: #e0e3e9;
+  --accent: #1d3557; --chip: #eaedf2;
+  --good: #d22d49; --mid: #c6cad2; --bad: #3661ad;
+  --lhp: #b8720a; --rhp: #1f7b85;
+  --mix1: #1d3557; --mix2: #5f7fa8; --mix3: #b3c3d9; --mixink1: #fff; --mixink2: #fff; --mixink3: #15181e;
+  --display: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  --ui: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --prose: "Source Serif 4", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1014; --paper: #161920; --ink: #e8eaef; --muted: #9ba2ae; --rule: #2a2f39;
+  --accent: #a9c1e3; --chip: #222731;
+  --good: #e2475f; --mid: #4b515c; --bad: #4f80d4;
+  --lhp: #e0a03a; --rhp: #4cb2bc;
+  --mix1: #a9c1e3; --mix2: #6c87ad; --mix3: #3b4c66; --mixink1: #0e1014; --mixink2: #fff; --mixink3: #e8eaef;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0e1014; --paper: #161920; --ink: #e8eaef; --muted: #9ba2ae; --rule: #2a2f39;
+  --accent: #a9c1e3; --chip: #222731;
+  --good: #e2475f; --mid: #4b515c; --bad: #4f80d4;
+  --lhp: #e0a03a; --rhp: #4cb2bc;
+  --mix1: #a9c1e3; --mix2: #6c87ad; --mix3: #3b4c66; --mixink1: #0e1014; --mixink2: #fff; --mixink3: #e8eaef;
+  color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--ui); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 28px; }
+
+/* Masthead */
+.eyebrow { font: 600 12px/1 var(--ui); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 700 clamp(44px, 8vw, 76px)/.92 var(--display); letter-spacing: -.01em; margin: 10px 0 14px; text-wrap: balance; text-transform: uppercase; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.meta span { background: var(--chip); border-radius: 4px; padding: 4px 9px; font-size: 13px; font-weight: 500; }
+.lede { font: 400 clamp(19px, 2.3vw, 23px)/1.45 var(--prose); max-width: 46em; margin: 0; text-wrap: pretty; }
+.lede p { margin: 0; }
+
+/* Cards */
+.card { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 22px clamp(16px, 3vw, 28px); min-width: 0; }
+.card-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 20px; margin-bottom: 14px; }
+h2 { font: 600 28px/1 var(--display); text-transform: uppercase; letter-spacing: .01em; margin: 0; text-wrap: balance; }
+h3 { font: 600 20px/1.1 var(--display); text-transform: uppercase; letter-spacing: .02em; margin: 0; }
+.sub { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+
+/* Segmented controls and tabs */
+.seg { display: inline-flex; background: var(--chip); border-radius: 7px; padding: 3px; gap: 2px; }
+.seg button { font: 600 13px/1 var(--ui); color: var(--muted); background: transparent; border: 0; border-radius: 5px;
+  padding: 8px 12px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.seg button[aria-pressed="true"], .seg button[aria-selected="true"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / .12); }
+.seg button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.seg small { font-weight: 500; opacity: .75; margin-left: 4px; }
+
+/* Percentile bars */
+.pgroups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 8px 44px; }
+.pgroup-title { font: 600 11px/1 var(--ui); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 14px 0 4px; }
+.prow { display: grid; grid-template-columns: minmax(7.5em, 9.5em) 3.6em 1fr; align-items: center; gap: 12px; padding: 7px 4px; border-radius: 6px; cursor: default; }
+.prow:hover, .prow:focus-visible { background: var(--chip); }
+.plabel { font-weight: 500; border-bottom: 1px dotted var(--muted); justify-self: start; line-height: 1.2; }
+.pval { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+.track { position: relative; height: 8px; background: var(--chip); border-radius: 4px; margin-right: 14px; }
+.fill { position: absolute; inset: 0 auto 0 0; border-radius: 4px; transition: width .45s ease, background-color .45s ease; }
+.dot { position: absolute; top: 50%; width: 28px; height: 28px; margin-left: -14px; transform: translateY(-50%); border-radius: 50%;
+  border: 2px solid var(--paper); display: grid; place-items: center; font: 700 11px/1 var(--ui); font-variant-numeric: tabular-nums;
+  transition: left .45s ease, background-color .45s ease; }
+.na { color: var(--muted); font-size: 13px; }
+
+/* Sections */
+.section { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px 36px; align-items: start; }
+.section .prose h2 { margin-bottom: 12px; }
+.prose { font: 400 17px/1.62 var(--prose); min-width: 0; }
+.prose p { margin: 0 0 1em; max-width: 36em; }
+.exhibit { min-width: 0; }
+.full .prose p { max-width: 42em; }
+@media (max-width: 860px) { .section { grid-template-columns: minmax(0, 1fr); } }
+
+/* Tables */
+.scroll { overflow-x: auto; }
+table { border-collapse: separate; border-spacing: 3px; width: 100%; font-variant-numeric: tabular-nums; }
+th { font: 600 12px/1.2 var(--ui); color: var(--muted); text-align: center; padding: 6px 4px; vertical-align: bottom; }
+th.m { border-bottom: 1px dotted var(--muted); cursor: default; }
+td { text-align: center; padding: 8px 6px; border-radius: 4px; white-space: nowrap; }
+td.rowh { font-weight: 600; text-align: left; padding-left: 2px; }
+tr.avg td { color: var(--muted); font-style: italic; border-top: 1px solid var(--rule); }
+td[tabindex] { cursor: default; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; color: var(--muted); font-size: 12px; margin-top: 10px; }
+.scale { display: inline-block; width: 90px; height: 8px; border-radius: 4px; vertical-align: middle; margin: 0 6px; }
+
+/* Platoon dot plot */
+.lrow { display: grid; grid-template-columns: 6.5em 1fr 7.8em; gap: 12px; align-items: center; padding: 8px 4px; border-radius: 6px; }
+.lrow:hover, .lrow:focus-visible { background: var(--chip); }
+.ltrack { position: relative; height: 22px; }
+.ltrack::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: var(--rule); }
+.lavg { position: absolute; top: 2px; bottom: 2px; width: 2px; margin-left: -1px; background: var(--muted); }
+.ldot { position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; border: 2px solid var(--paper); }
+.lvals { font-size: 13px; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.key { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; margin-right: 5px; }
+.key.tick { width: 2px; height: 12px; border-radius: 0; background: var(--muted); }
+.pa-note { font-size: 13px; color: var(--muted); margin: 0 0 6px; }
+
+/* Pitch mix */
+.mix { display: grid; gap: 6px; margin-top: 18px; }
+.mixrow { display: grid; grid-template-columns: 6.5em 1fr; gap: 12px; align-items: center; font-size: 13px; }
+.mixbar { display: flex; height: 22px; border-radius: 4px; overflow: hidden; }
+.mixbar span { display: grid; place-items: center; font: 600 11px/1 var(--ui); color: #fff; min-width: 0; overflow: hidden; }
+
+/* Footer */
+footer { color: var(--muted); font-size: 13px; display: grid; gap: 8px; border-top: 1px solid var(--rule); padding-top: 18px; }
+footer p { margin: 0; max-width: 70em; }
+
+/* Hover card */
+#tip { position: fixed; z-index: 20; max-width: 280px; background: var(--ink); color: var(--paper); border-radius: 8px;
+  padding: 10px 12px; font-size: 13px; line-height: 1.4; pointer-events: none; box-shadow: 0 6px 20px rgb(0 0 0 / .25); }
+#tip b { display: block; font-size: 14px; margin-bottom: 2px; }
+#tip .t-def { opacity: .8; margin-top: 6px; }
+
+@media (prefers-reduced-motion: reduce) { .fill, .dot { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="name"></h1>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div class="lede" id="lede"></div>
+
+  <section class="card" aria-labelledby="pct-h">
+    <div class="card-head">
+      <div>
+        <h2 id="pct-h">Percentile rankings</h2>
+        <p class="sub" id="pct-sub"></p>
+      </div>
+      <div class="seg" id="season-seg" role="group" aria-label="Season"></div>
+    </div>
+    <div class="pgroups" id="pgroups"></div>
+  </section>
+
+  <section class="card section" id="sec-expected"></section>
+  <section class="card section" id="sec-batted"></section>
+  <section class="card section" id="sec-discipline"></section>
+  <section class="card section" id="sec-platoon"></section>
+  <section class="card section" id="sec-pitch"></section>
+  <section class="card full" id="sec-synthesis"></section>
+
+  <footer id="foot"></footer>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+const D = {"player": {"name": "Wilyer Abreu", "pos": "RF", "bats": "L", "throws": "L", "age": 27, "season": 2026, "pa": 681, "team": "Boston Red Sox", "dataThrough": "2026-09-27"}, "metrics": {"xwoba": {"label": "xwOBA", "better": "higher", "def": "Expected wOBA from the quality of his contact (exit velocity and launch angle), plus his actual strikeouts and walks. House model."}, "xba": {"label": "xBA", "better": "higher", "def": "Expected batting average from his contact quality. Strikeouts pull it down. House model."}, "xiso": {"label": "xISO", "better": "higher", "def": "Expected isolated power: xSLG minus xBA. The extra bases his contact should produce per at-bat."}, "woba": {"label": "wOBA", "better": "higher", "def": "Weighted on-base average: every way of reaching base, weighted by its run value."}, "ev90": {"label": "EV90", "better": "higher", "def": "His 90th-percentile exit velocity (mph). How hard he hits the ball at the top end."}, "hard_hit_pct": {"label": "Hard-hit%", "better": "higher", "def": "Share of batted balls hit 95 mph or harder."}, "barrel_pct": {"label": "Barrel%", "better": "higher", "def": "Share of batted balls hit at the exit velocity and launch angle that most often become extra-base hits."}, "sweet_spot_pct": {"label": "Sweet spot%", "better": "higher", "def": "Share of batted balls with a launch angle of 8 to 32 degrees."}, "median_la": {"label": "LA median", "better": null, "def": "His median launch angle in degrees. Higher means more balls in the air."}, "sd_la": {"label": "LA SD", "better": "lower", "def": "How spread out his launch angles are. Lower means a more consistent swing path."}, "pulled_fb_pct": {"label": "Pulled Air%", "better": "higher", "def": "Fly balls, line drives and popups hit to his pull side, as a share of batted balls. Not the same as FB%."}, "gb_pct": {"label": "GB%", "better": null, "def": "Share of batted balls hit on the ground."}, "z_swing_pct": {"label": "IZ Swing%", "better": null, "def": "How often he swings at pitches in the strike zone."}, "chase_pct": {"label": "Chase%", "better": "lower", "def": "How often he swings at pitches outside the strike zone."}, "swing_score": {"label": "IZ Swing \u2212 Chase", "better": "higher", "def": "In-zone swing rate minus chase rate. Generally higher is better: he attacks strikes and lays off balls. Not a swing-decision score."}, "whiff_pct": {"label": "Whiff%", "better": "lower", "def": "Share of his swings that miss."}, "k_pct": {"label": "K%", "better": "lower", "def": "Strikeouts per plate appearance."}, "bb_pct": {"label": "BB%", "better": "higher", "def": "Walks per plate appearance."}, "sprint_speed": {"label": "Sprint speed", "better": "higher", "def": "Feet per second on competitive runs. About 27 is average, 30+ elite."}, "pitch_share": {"label": "Share", "better": null, "def": "Share of the pitches he saw that came from this group. How pitchers attack him."}}, "percentileGroups": [["Expected stats", ["xwoba", "xba", "xiso"]], ["Batted-ball profile", ["ev90", "hard_hit_pct", "barrel_pct", "pulled_fb_pct"]], ["Plate discipline", ["swing_score", "chase_pct", "whiff_pct", "k_pct", "bb_pct"]], ["Speed", ["sprint_speed"]]], "tables": {"expected": ["xwoba", "xba", "xiso", "woba"], "batted": ["ev90", "hard_hit_pct", "barrel_pct", "median_la", "sd_la", "pulled_fb_pct", "gb_pct"], "discipline": ["z_swing_pct", "chase_pct", "swing_score", "whiff_pct", "k_pct", "bb_pct"]}, "platoonCols": ["xwoba", "xba", "xiso", "ev90", "barrel_pct", "gb_pct", "chase_pct", "whiff_pct", "k_pct", "bb_pct"], "pitchCols": ["pitch_share", "chase_pct", "whiff_pct", "swing_score", "xwoba", "ev90", "barrel_pct"], "seasons": [{"season": 2024, "pa": 447, "bbe": 276, "qualified": false, "league": 129, "stats": {"xwoba": {"v": ".330", "raw": 0.33, "avg": ".335", "rank": 65, "of": 129, "p": 50, "lo": 0.28, "hi": 0.397, "avgRaw": 0.335}, "xba": {"v": ".235", "raw": 0.235, "avg": ".256", "rank": 111, "of": 129, "p": 14, "lo": 0.219, "hi": 0.305, "avgRaw": 0.25609302325581396}, "xiso": {"v": ".203", "raw": 0.203, "avg": ".180", "rank": 42, "of": 129, "p": 68, "lo": 0.09500000000000003, "hi": 0.26699999999999996, "avgRaw": 0.18048837209302326}, "woba": {"v": ".339", "raw": 0.339, "avg": ".333", "rank": 45, "of": 129, "p": 66, "lo": 0.284, "hi": 0.398, "avgRaw": 0.3333178294573643}, "ev90": {"v": "106.5", "raw": 106.5, "avg": "105.0", "rank": 37, "of": 129, "p": 72, "lo": 100.4, "hi": 109.5, "avgRaw": 105.01472868217054}, "hard_hit_pct": {"v": "51.1%", "raw": 0.511, "avg": "42.0%", "rank": 12, "of": 129, "p": 91, "lo": 0.285, "hi": 0.539, "avgRaw": 0.4195968992248062}, "barrel_pct": {"v": "10.5%", "raw": 0.105, "avg": "8.7%", "rank": 42, "of": 129, "p": 68, "lo": 0.026, "hi": 0.148, "avgRaw": 0.08710077519379845}, "sweet_spot_pct": {"v": "33.5%", "raw": 0.335, "avg": "34.5%", "rank": 80, "of": 129, "p": 38, "lo": 0.288, "hi": 0.401, "avgRaw": 0.34491472868217055}, "median_la": {"v": "20.0", "raw": 20.0, "avg": "14.0", "lo": 8.0, "hi": 21.0, "avgRaw": 13.992248062015504}, "sd_la": {"v": "28.7", "raw": 28.7, "avg": "27.9", "rank": 89, "of": 129, "p": 31, "lo": 24.8, "hi": 31.2, "avgRaw": 27.9031007751938}, "pulled_fb_pct": {"v": "24.6%", "raw": 0.246, "avg": "17.9%", "rank": 13, "of": 129, "p": 91, "lo": 0.105, "hi": 0.279, "avgRaw": 0.1787984496124031}, "gb_pct": {"v": "34.1%", "raw": 0.341, "avg": "42.0%", "lo": 0.323, "hi": 0.506, "avgRaw": 0.41977519379844963}, "z_swing_pct": {"v": "68.4%", "raw": 0.684, "avg": "68.2%", "lo": 0.595, "hi": 0.776, "avgRaw": 0.6819999999999999}, "chase_pct": {"v": "28.2%", "raw": 0.282, "avg": "28.3%", "rank": 71, "of": 129, "p": 45, "lo": 0.207, "hi": 0.373, "avgRaw": 0.2825891472868217}, "swing_score": {"v": ".402", "raw": 0.4020000000000001, "avg": ".399", "rank": 64, "of": 129, "p": 51, "lo": 0.31300000000000006, "hi": 0.478, "avgRaw": 0.3994108527131783}, "whiff_pct": {"v": "29.6%", "raw": 0.296, "avg": "24.0%", "rank": 105, "of": 129, "p": 19, "lo": 0.142, "hi": 0.335, "avgRaw": 0.24045736434108528}, "k_pct": {"v": "28.0%", "raw": 0.28, "avg": "21.1%", "rank": 117, "of": 129, "p": 9, "lo": 0.128, "hi": 0.288, "avgRaw": 0.21064341085271315}, "bb_pct": {"v": "8.9%", "raw": 0.089, "avg": "8.7%", "rank": 61, "of": 129, "p": 53, "lo": 0.047, "hi": 0.122, "avgRaw": 0.08686046511627907}, "sprint_speed": {"v": "27.5", "raw": 27.5, "avg": "27.4", "rank": 64, "of": 129, "p": 51, "lo": 25.4, "hi": 29.6, "avgRaw": 27.43488372093023}}}, {"season": 2025, "pa": 417, "bbe": 276, "qualified": false, "league": 145, "stats": {"xwoba": {"v": ".347", "raw": 0.347, "avg": ".339", "rank": 49, "of": 145, "p": 67, "lo": 0.297, "hi": 0.395, "avgRaw": 0.3389379310344828}, "xba": {"v": ".250", "raw": 0.25, "avg": ".260", "rank": 99, "of": 145, "p": 32, "lo": 0.23, "hi": 0.29, "avgRaw": 0.25964137931034487}, "xiso": {"v": ".238", "raw": 0.238, "avg": ".184", "rank": 24, "of": 145, "p": 84, "lo": 0.09199999999999997, "hi": 0.28099999999999997, "avgRaw": 0.18390344827586208}, "woba": {"v": ".337", "raw": 0.337, "avg": ".334", "rank": 62, "of": 145, "p": 58, "lo": 0.29, "hi": 0.373, "avgRaw": 0.33383448275862065}, "ev90": {"v": "107.5", "raw": 107.5, "avg": "105.4", "rank": 30, "of": 145, "p": 80, "lo": 100.8, "hi": 109.2, "avgRaw": 105.37655172413794}, "hard_hit_pct": {"v": "44.9%", "raw": 0.449, "avg": "43.4%", "rank": 73, "of": 145, "p": 50, "lo": 0.295, "hi": 0.545, "avgRaw": 0.4338620689655172}, "barrel_pct": {"v": "12.0%", "raw": 0.12, "avg": "9.4%", "rank": 37, "of": 145, "p": 75, "lo": 0.024, "hi": 0.168, "avgRaw": 0.09370344827586206}, "sweet_spot_pct": {"v": "31.9%", "raw": 0.319, "avg": "34.9%", "rank": 124, "of": 145, "p": 15, "lo": 0.298, "hi": 0.397, "avgRaw": 0.3489103448275862}, "median_la": {"v": "23.0", "raw": 23.0, "avg": "14.0", "lo": 8.0, "hi": 20.0, "avgRaw": 14.013793103448275}, "sd_la": {"v": "27.6", "raw": 27.6, "avg": "27.9", "rank": 56, "of": 145, "p": 62, "lo": 24.7, "hi": 30.5, "avgRaw": 27.90206896551724}, "pulled_fb_pct": {"v": "25.7%", "raw": 0.257, "avg": "18.4%", "rank": 11, "of": 145, "p": 93, "lo": 0.112, "hi": 0.259, "avgRaw": 0.18426206896551725}, "gb_pct": {"v": "31.5%", "raw": 0.315, "avg": "41.5%", "lo": 0.322, "hi": 0.497, "avgRaw": 0.41543448275862066}, "z_swing_pct": {"v": "73.6%", "raw": 0.736, "avg": "66.7%", "lo": 0.57, "hi": 0.753, "avgRaw": 0.6670551724137931}, "chase_pct": {"v": "29.0%", "raw": 0.29, "avg": "27.8%", "rank": 90, "of": 145, "p": 38, "lo": 0.195, "hi": 0.379, "avgRaw": 0.27844827586206894}, "swing_score": {"v": ".446", "raw": 0.446, "avg": ".389", "rank": 17, "of": 145, "p": 89, "lo": 0.30400000000000005, "hi": 0.477, "avgRaw": 0.38860689655172415}, "whiff_pct": {"v": "24.0%", "raw": 0.24, "avg": "23.8%", "rank": 69, "of": 145, "p": 53, "lo": 0.13, "hi": 0.329, "avgRaw": 0.2382758620689655}, "k_pct": {"v": "24.2%", "raw": 0.242, "avg": "20.4%", "rank": 104, "of": 145, "p": 28, "lo": 0.11, "hi": 0.284, "avgRaw": 0.2042344827586207}, "bb_pct": {"v": "9.6%", "raw": 0.096, "avg": "8.9%", "rank": 48, "of": 145, "p": 67, "lo": 0.048, "hi": 0.141, "avgRaw": 0.08858620689655172}, "sprint_speed": {"v": "27.6", "raw": 27.6, "avg": "27.4", "rank": 63, "of": 145, "p": 57, "lo": 25.3, "hi": 29.2, "avgRaw": 27.420689655172414}}}, {"season": 2026, "pa": 681, "bbe": 464, "qualified": true, "league": 135, "stats": {"xwoba": {"v": ".354", "raw": 0.354, "avg": ".338", "rank": 37, "of": 135, "p": 73, "lo": 0.287, "hi": 0.386, "avgRaw": 0.33770370370370373}, "xba": {"v": ".252", "raw": 0.252, "avg": ".254", "rank": 73, "of": 135, "p": 46, "lo": 0.216, "hi": 0.289, "avgRaw": 0.2544}, "xiso": {"v": ".224", "raw": 0.22399999999999998, "avg": ".175", "rank": 25, "of": 135, "p": 82, "lo": 0.089, "hi": 0.252, "avgRaw": 0.17545925925925926}, "woba": {"v": ".340", "raw": 0.34, "avg": ".336", "rank": 60, "of": 135, "p": 56, "lo": 0.284, "hi": 0.383, "avgRaw": 0.33556296296296295}, "ev90": {"v": "105.3", "raw": 105.3, "avg": "104.6", "rank": 58, "of": 135, "p": 57, "lo": 99.9, "hi": 109.0, "avgRaw": 104.57481481481481}, "hard_hit_pct": {"v": "43.5%", "raw": 0.435, "avg": "41.0%", "rank": 55, "of": 135, "p": 60, "lo": 0.272, "hi": 0.539, "avgRaw": 0.4095185185185185}, "barrel_pct": {"v": "12.1%", "raw": 0.121, "avg": "8.3%", "rank": 24, "of": 135, "p": 83, "lo": 0.023, "hi": 0.145, "avgRaw": 0.08323703703703704}, "sweet_spot_pct": {"v": "36.3%", "raw": 0.363, "avg": "34.6%", "rank": 41, "of": 135, "p": 70, "lo": 0.292, "hi": 0.396, "avgRaw": 0.3458074074074074}, "median_la": {"v": "21.0", "raw": 21.0, "avg": "14.7", "lo": 8.0, "hi": 22.0, "avgRaw": 14.685185185185185}, "sd_la": {"v": "27.1", "raw": 27.1, "avg": "27.9", "rank": 47, "of": 135, "p": 66, "lo": 24.7, "hi": 30.7, "avgRaw": 27.947407407407407}, "pulled_fb_pct": {"v": "19.4%", "raw": 0.194, "avg": "19.4%", "rank": 63, "of": 135, "p": 54, "lo": 0.104, "hi": 0.299, "avgRaw": 0.19428888888888887}, "gb_pct": {"v": "33.2%", "raw": 0.332, "avg": "41.0%", "lo": 0.312, "hi": 0.508, "avgRaw": 0.4100888888888889}, "z_swing_pct": {"v": "67.6%", "raw": 0.676, "avg": "66.8%", "lo": 0.566, "hi": 0.75, "avgRaw": 0.6678666666666667}, "chase_pct": {"v": "29.5%", "raw": 0.295, "avg": "29.4%", "rank": 70, "of": 135, "p": 49, "lo": 0.201, "hi": 0.399, "avgRaw": 0.29403703703703704}, "swing_score": {"v": ".381", "raw": 0.38100000000000006, "avg": ".374", "rank": 62, "of": 135, "p": 54, "lo": 0.277, "hi": 0.45899999999999996, "avgRaw": 0.3738296296296296}, "whiff_pct": {"v": "24.6%", "raw": 0.246, "avg": "23.9%", "rank": 74, "of": 135, "p": 46, "lo": 0.125, "hi": 0.334, "avgRaw": 0.2388888888888889}, "k_pct": {"v": "20.7%", "raw": 0.207, "avg": "20.7%", "rank": 66, "of": 135, "p": 51, "lo": 0.099, "hi": 0.309, "avgRaw": 0.20708148148148148}, "bb_pct": {"v": "10.4%", "raw": 0.104, "avg": "9.5%", "rank": 52, "of": 135, "p": 62, "lo": 0.046, "hi": 0.15, "avgRaw": 0.09454814814814815}, "sprint_speed": {"v": "28.0", "raw": 28.0, "avg": "27.4", "rank": 44, "of": 135, "p": 68, "lo": 25.3, "hi": 29.4, "avgRaw": 27.38222222222222}}}], "platoon": [{"key": "lhp", "label": "vs LHP", "pa": 217, "stats": {"xwoba": {"v": ".359", "raw": 0.359, "avg": ".338", "rank": 31, "of": 135, "p": 78, "lo": 0.287, "hi": 0.386, "avgRaw": 0.33770370370370373}, "xba": {"v": ".267", "raw": 0.267, "avg": ".254", "rank": 44, "of": 135, "p": 68, "lo": 0.216, "hi": 0.289, "avgRaw": 0.2544}, "xiso": {"v": ".195", "raw": 0.195, "avg": ".175", "rank": 51, "of": 135, "p": 63, "lo": 0.089, "hi": 0.252, "avgRaw": 0.17545925925925926}, "ev90": {"v": "103.0", "raw": 103.0, "avg": "104.6", "rank": 96, "of": 135, "p": 29, "lo": 99.9, "hi": 109.0, "avgRaw": 104.57481481481481}, "barrel_pct": {"v": "10.3%", "raw": 0.103, "avg": "8.3%", "rank": 47, "of": 135, "p": 66, "lo": 0.023, "hi": 0.145, "avgRaw": 0.08323703703703704}, "gb_pct": {"v": "37.8%", "raw": 0.378, "avg": "41.0%", "lo": 0.312, "hi": 0.508, "avgRaw": 0.4100888888888889}, "chase_pct": {"v": "27.4%", "raw": 0.274, "avg": "29.4%", "rank": 46, "of": 135, "p": 66, "lo": 0.201, "hi": 0.399, "avgRaw": 0.29403703703703704}, "whiff_pct": {"v": "23.2%", "raw": 0.232, "avg": "23.9%", "rank": 61, "of": 135, "p": 55, "lo": 0.125, "hi": 0.334, "avgRaw": 0.2388888888888889}, "k_pct": {"v": "16.6%", "raw": 0.166, "avg": "20.7%", "rank": 37, "of": 135, "p": 73, "lo": 0.099, "hi": 0.309, "avgRaw": 0.20708148148148148}, "bb_pct": {"v": "10.6%", "raw": 0.106, "avg": "9.5%", "rank": 48, "of": 135, "p": 65, "lo": 0.046, "hi": 0.15, "avgRaw": 0.09454814814814815}}}, {"key": "rhp", "label": "vs RHP", "pa": 464, "stats": {"xwoba": {"v": ".352", "raw": 0.352, "avg": ".338", "rank": 38, "of": 135, "p": 72, "lo": 0.287, "hi": 0.386, "avgRaw": 0.33770370370370373}, "xba": {"v": ".245", "raw": 0.245, "avg": ".254", "rank": 89, "of": 135, "p": 34, "lo": 0.216, "hi": 0.289, "avgRaw": 0.2544}, "xiso": {"v": ".237", "raw": 0.237, "avg": ".175", "rank": 18, "of": 135, "p": 87, "lo": 0.089, "hi": 0.252, "avgRaw": 0.17545925925925926}, "ev90": {"v": "106.0", "raw": 106.0, "avg": "104.6", "rank": 44, "of": 135, "p": 68, "lo": 99.9, "hi": 109.0, "avgRaw": 104.57481481481481}, "barrel_pct": {"v": "13.0%", "raw": 0.13, "avg": "8.3%", "rank": 15, "of": 135, "p": 90, "lo": 0.023, "hi": 0.145, "avgRaw": 0.08323703703703704}, "gb_pct": {"v": "30.8%", "raw": 0.308, "avg": "41.0%", "lo": 0.312, "hi": 0.508, "avgRaw": 0.4100888888888889}, "chase_pct": {"v": "30.5%", "raw": 0.305, "avg": "29.4%", "rank": 78, "of": 135, "p": 43, "lo": 0.201, "hi": 0.399, "avgRaw": 0.29403703703703704}, "whiff_pct": {"v": "25.3%", "raw": 0.253, "avg": "23.9%", "rank": 81, "of": 135, "p": 40, "lo": 0.125, "hi": 0.334, "avgRaw": 0.2388888888888889}, "k_pct": {"v": "22.6%", "raw": 0.226, "avg": "20.7%", "rank": 83, "of": 135, "p": 39, "lo": 0.099, "hi": 0.309, "avgRaw": 0.20708148148148148}, "bb_pct": {"v": "10.3%", "raw": 0.103, "avg": "9.5%", "rank": 53, "of": 135, "p": 61, "lo": 0.046, "hi": 0.15, "avgRaw": 0.09454814814814815}}}, {"key": "all", "label": "Overall", "pa": 681, "stats": {"xwoba": {"v": ".354", "raw": 0.354, "avg": ".338", "rank": 37, "of": 135, "p": 73, "lo": 0.287, "hi": 0.386, "avgRaw": 0.33770370370370373}, "xba": {"v": ".252", "raw": 0.252, "avg": ".254", "rank": 73, "of": 135, "p": 46, "lo": 0.216, "hi": 0.289, "avgRaw": 0.2544}, "xiso": {"v": ".224", "raw": 0.22399999999999998, "avg": ".175", "rank": 25, "of": 135, "p": 82, "lo": 0.089, "hi": 0.252, "avgRaw": 0.17545925925925926}, "ev90": {"v": "105.3", "raw": 105.3, "avg": "104.6", "rank": 58, "of": 135, "p": 57, "lo": 99.9, "hi": 109.0, "avgRaw": 104.57481481481481}, "barrel_pct": {"v": "12.1%", "raw": 0.121, "avg": "8.3%", "rank": 24, "of": 135, "p": 83, "lo": 0.023, "hi": 0.145, "avgRaw": 0.08323703703703704}, "gb_pct": {"v": "33.2%", "raw": 0.332, "avg": "41.0%", "lo": 0.312, "hi": 0.508, "avgRaw": 0.4100888888888889}, "chase_pct": {"v": "29.5%", "raw": 0.295, "avg": "29.4%", "rank": 70, "of": 135, "p": 49, "lo": 0.201, "hi": 0.399, "avgRaw": 0.29403703703703704}, "whiff_pct": {"v": "24.6%", "raw": 0.246, "avg": "23.9%", "rank": 74, "of": 135, "p": 46, "lo": 0.125, "hi": 0.334, "avgRaw": 0.2388888888888889}, "k_pct": {"v": "20.7%", "raw": 0.207, "avg": "20.7%", "rank": 66, "of": 135, "p": 51, "lo": 0.099, "hi": 0.309, "avgRaw": 0.20708148148148148}, "bb_pct": {"v": "10.4%", "raw": 0.104, "avg": "9.5%", "rank": 52, "of": 135, "p": 62, "lo": 0.046, "hi": 0.15, "avgRaw": 0.09454814814814815}}}], "pitch": [{"group": "fastball", "pa": 375, "pitches": 1677, "leagueShare": "55.2%", "leagueShareRaw": 0.5518814814814815, "stats": {"pitch_share": {"v": "61.2%", "raw": 0.612, "avg": "55.2%", "lo": 0.476, "hi": 0.63, "avgRaw": 0.5518814814814815}, "chase_pct": {"v": "28.1%", "raw": 0.281, "avg": "27.8%", "rank": 78, "of": 135, "p": 43, "lo": 0.171, "hi": 0.391, "avgRaw": 0.2780074074074074}, "whiff_pct": {"v": "23.7%", "raw": 0.237, "avg": "18.8%", "rank": 108, "of": 135, "p": 20, "lo": 0.09, "hi": 0.284, "avgRaw": 0.18847407407407407}, "swing_score": {"v": ".375", "raw": 0.375, "avg": ".381", "rank": 77, "of": 135, "p": 43, "lo": 0.246, "hi": 0.504, "avgRaw": 0.38094814814814815}, "xwoba": {"v": ".358", "raw": 0.358, "avg": ".368", "rank": 76, "of": 135, "p": 44, "lo": 0.307, "hi": 0.434, "avgRaw": 0.36791111111111113}, "ev90": {"v": "105.0", "raw": 105.0, "avg": "105.1", "rank": 71, "of": 135, "p": 48, "lo": 100.3, "hi": 109.5, "avgRaw": 105.10592592592592}, "barrel_pct": {"v": "11.5%", "raw": 0.115, "avg": "8.9%", "rank": 43, "of": 135, "p": 69, "lo": 0.018, "hi": 0.16, "avgRaw": 0.08925925925925926}}, "history": [{"season": 2024, "share": "59.8%", "shareRaw": 0.598, "whiff": "29.5%", "chase": "18.2%"}, {"season": 2025, "share": "60.9%", "shareRaw": 0.609, "whiff": "21.6%", "chase": "22.9%"}, {"season": 2026, "share": "61.2%", "shareRaw": 0.612, "whiff": "23.7%", "chase": "28.1%"}]}, {"group": "breaking", "pa": 166, "pitches": 664, "leagueShare": "30.5%", "leagueShareRaw": 0.30460000000000004, "stats": {"pitch_share": {"v": "24.2%", "raw": 0.242, "avg": "30.5%", "lo": 0.242, "hi": 0.37, "avgRaw": 0.30460000000000004}, "chase_pct": {"v": "28.8%", "raw": 0.288, "avg": "30.1%", "rank": 61, "of": 135, "p": 55, "lo": 0.199, "hi": 0.428, "avgRaw": 0.30093333333333333}, "whiff_pct": {"v": "25.1%", "raw": 0.251, "avg": "30.2%", "rank": 32, "of": 135, "p": 77, "lo": 0.162, "hi": 0.415, "avgRaw": 0.3018814814814815}, "swing_score": {"v": ".354", "raw": 0.35400000000000004, "avg": ".346", "rank": 67, "of": 135, "p": 51, "lo": 0.22499999999999998, "hi": 0.46, "avgRaw": 0.34642962962962964}, "xwoba": {"v": ".363", "raw": 0.363, "avg": ".303", "rank": 12, "of": 135, "p": 92, "lo": 0.242, "hi": 0.371, "avgRaw": 0.30293333333333333}, "ev90": {"v": "105.3", "raw": 105.3, "avg": "103.4", "rank": 41, "of": 135, "p": 70, "lo": 97.1, "hi": 108.7, "avgRaw": 103.42592592592592}, "barrel_pct": {"v": "14.2%", "raw": 0.142, "avg": "8.3%", "rank": 15, "of": 135, "p": 90, "lo": 0.015, "hi": 0.168, "avgRaw": 0.0829925925925926}}, "history": [{"season": 2024, "share": "24.6%", "shareRaw": 0.246, "whiff": "31.5%", "chase": "39.5%"}, {"season": 2025, "share": "22.5%", "shareRaw": 0.225, "whiff": "31.9%", "chase": "37.7%"}, {"season": 2026, "share": "24.2%", "shareRaw": 0.242, "whiff": "25.1%", "chase": "28.8%"}]}, {"group": "offspeed", "pa": 136, "pitches": 399, "leagueShare": "14.4%", "leagueShareRaw": 0.14352592592592595, "stats": {"pitch_share": {"v": "14.6%", "raw": 0.146, "avg": "14.4%", "lo": 0.096, "hi": 0.211, "avgRaw": 0.14352592592592595}, "chase_pct": {"v": "35.1%", "raw": 0.351, "avg": "32.8%", "rank": 85, "of": 135, "p": 37, "lo": 0.207, "hi": 0.436, "avgRaw": 0.32793333333333335}, "whiff_pct": {"v": "27.9%", "raw": 0.279, "avg": "29.9%", "rank": 62, "of": 135, "p": 54, "lo": 0.162, "hi": 0.462, "avgRaw": 0.2985851851851852}, "swing_score": {"v": ".503", "raw": 0.503, "avg": ".436", "rank": 22, "of": 135, "p": 84, "lo": 0.32199999999999995, "hi": 0.542, "avgRaw": 0.4359185185185185}, "xwoba": {"v": ".327", "raw": 0.327, "avg": ".299", "rank": 43, "of": 135, "p": 69, "lo": 0.224, "hi": 0.379, "avgRaw": 0.29894814814814813}, "ev90": {"v": "106.2", "raw": 106.2, "avg": "103.3", "rank": 22, "of": 135, "p": 84, "lo": 98.6, "hi": 107.9, "avgRaw": 103.26592592592593}, "barrel_pct": {"v": "11.5%", "raw": 0.115, "avg": "6.7%", "rank": 22, "of": 135, "p": 84, "lo": 0.0, "hi": 0.145, "avgRaw": 0.06694074074074075}}, "history": [{"season": 2024, "share": "15.6%", "shareRaw": 0.156, "whiff": "28.6%", "chase": "40.4%"}, {"season": 2025, "share": "16.6%", "shareRaw": 0.166, "whiff": "22.5%", "chase": "35.4%"}, {"season": 2026, "share": "14.6%", "shareRaw": 0.146, "whiff": "27.9%", "chase": "35.1%"}]}], "report": {"title": "Wilyer Abreu \u2014 RF, Boston Red Sox \u00b7 Age 27 (2026) \u00b7 Bats L / Throws L", "sections": {"top": "<p>Abreu is a fly-ball power hitter who wins with launch more than exit velocity. He lifts the ball far more than most hitters and turns an above-average share of it into barrels. His value comes from extra-base damage, supported by league-average plate discipline that has cut his strikeouts each season.<\/p>", "expected": "<p>His .354 xwOBA (house model; expected wOBA from contact quality, strikeouts and walks) ranks in the 73rd percentile and has risen in each of the last two seasons. He gets there through damage, not contact. His xBA (house model) of .252 sits just below the qualified average, while his xISO, the extra bases his contact should produce per at-bat, ranks in the 82nd percentile. His wOBA has trailed his xwOBA in both 2025 and 2026, which suggests his results understate his contact quality.<\/p>", "batted": "<p>Abreu does his damage through efficient launch. His EV90 of 105.3 is only modestly above the qualified average. His 21.0-degree median launch angle is far above the league's 14.7, his launch spread is a bit tighter than average, and he keeps the ball off the ground. Together that produces a Barrel% in the 83rd percentile. He is not pull-dependent. His Pulled Air% (balls hit in the air to his pull side) is exactly league average and fell 6.3 pts this year, and his Pull% runs below average. His Sweet spot% and Oppo% rose alongside that drop, which reads as an all-fields adjustment rather than lost lift. The concern is exit velocity: EV90 fell 2.2 mph from 2025, and Hard-hit% has slipped two years running.<\/p>", "discipline": "<p>His approach sits near the middle of the league. In-zone swing rate, Chase% and Whiff% are all close to the qualified average, and his IZ Swing \u2212 Chase (in-zone swing rate minus chase rate) is in the 54th percentile. The trend is the story. His K% has fallen from 28.0% in 2024 to 20.7%, now exactly league average, because his Whiff% dropped from its 2024 level and held there. He swung at fewer strikes in 2026, and that drove the dip in IZ Swing \u2212 Chase. His BB% is a touch above average.<\/p>", "platoon": "<p>He is an everyday bat, with an xwOBA of .359 against lefties and .352 against righties. He gets there differently on each side. Against left-handers he strikes out less but hits the ball softer and on the ground more. Against right-handers he does more damage, with a 106.0 EV90 and a higher xISO, at the cost of more strikeouts. His results gap between wOBA and xwOBA sits on the right-handed side.<\/p>", "pitch": "<p>He punishes spin, and fastballs are the hole. Against breaking balls his xwOBA ranks in the 92nd percentile, with a Barrel% in the 90th and a better-than-average Whiff%. He also hits offspeed pitches hard. Against fastballs, his Whiff% is in the bottom quarter of qualified hitters (20th percentile), his xwOBA is below average, and his Chase% has climbed each season since 2024. Pitchers appear to have noticed. His fastball share of 61.2% is above the 55.2% average and has edged up each year, while he sees fewer breaking balls than average.<\/p>", "synthesis": "<p>Abreu's value runs through launch. He swings and makes contact at roughly league-average rates. When he connects, though, the ball leaves at a productive angle, so a solid but unspectacular exit-velocity profile still produces barrels and near top-quarter expected power. That is how a hitter with an ordinary expected batting average posts an above-average xwOBA. The strikeout gains have amplified it: more balls in play gives the power more chances to show, and his walk rate has not suffered.<\/p><p>His biggest vulnerability is fastball contact. He misses fastballs more than most hitters, and pitchers lean on them while steering away from the breaking balls he punishes. The direction is mixed. His 2026 changes look like a deliberate trade of some pull-side power for steadier, all-fields contact: less pulled air, more line drives and opposite-field balls, fewer strikeouts. His xwOBA rose through that trade. The EV90 drop and the two-year slide in Hard-hit% are the signals to watch. His Whiff% has not risen with them, so at 27 this reads more as a dip in top-end exit velocity than a slowing bat.<\/p>", "notes": "<p>PA were 447 in 2024, 417 in 2025 and 681 in 2026. The 85 PA in 2023 are too few for a read. The vs LHP split is 217 PA. Pitch-group results rest on 375 fastball, 166 breaking and 136 offspeed PA ending, so the breaking and offspeed results are the smaller samples. Data through 2026-09-27.<\/p>"}, "source": "wilyer-abreu_20261019_175144.md"}};
+const M = D.metrics;
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const ordinal = n => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th");
+
+// ---------- percentile colors (blue = worse, grey = average, red = better), read from the theme
+function hex(v) { const h = getComputedStyle(document.documentElement).getPropertyValue(v).trim().replace("#", "");
+  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
+let PAL;
+function readPalette() { PAL = { bad: hex("--bad"), mid: hex("--mid"), good: hex("--good") }; }
+function pColor(p, alpha = 1) {
+  const [a, b, t] = p < 50 ? [PAL.bad, PAL.mid, p / 50] : [PAL.mid, PAL.good, (p - 50) / 50];
+  const c = a.map((x, i) => Math.round(x + (b[i] - x) * t));
+  return `rgb(${c.join(" ")} / ${alpha})`;
+}
+const strong = p => Math.abs(p - 50) > 22;
+
+// ---------- hover card
+const tip = $("#tip");
+const tips = new Map(); let tipId = 0;
+function tipAttr(html) { const id = ++tipId; tips.set(String(id), html); return `data-tip="${id}" tabindex="0"`; }
+function standing(s) {
+  if (s.rank == null) return `Qualified avg ${esc(s.avg)}`;
+  return `Rank ${s.rank} of ${s.of} · ${ordinal(s.p)} percentile<br>Qualified avg ${esc(s.avg)}`;
+}
+function showTip(el, x, y) {
+  tip.innerHTML = tips.get(el.dataset.tip); tip.hidden = false;
+  const r = tip.getBoundingClientRect(), pad = 12;
+  let left = x + 14, top = y + 14;
+  if (left + r.width > innerWidth - pad) left = Math.max(pad, x - r.width - 14);
+  if (top + r.height > innerHeight - pad) top = Math.max(pad, y - r.height - 14);
+  tip.style.left = left + "px"; tip.style.top = top + "px";
+}
+document.addEventListener("pointermove", e => {
+  const el = e.target.closest("[data-tip]");
+  if (el) showTip(el, e.clientX, e.clientY); else tip.hidden = true;
+});
+document.addEventListener("focusin", e => {
+  const el = e.target.closest("[data-tip]"); if (!el) return;
+  const r = el.getBoundingClientRect(); showTip(el, r.left, r.bottom);
+});
+document.addEventListener("focusout", () => { tip.hidden = true; });
+document.addEventListener("scroll", () => { tip.hidden = true; }, { passive: true });
+
+// ---------- header and text
+const P = D.player, S = D.report.sections;
+$("#eyebrow").textContent = `Hitter profile · ${P.season} season`;
+$("#name").textContent = P.name;
+$("#meta").innerHTML = [P.pos, P.team, `Age ${P.age}`, `Bats ${P.bats} / Throws ${P.throws}`, `${P.pa} PA`]
+  .map(t => `<span>${esc(t)}</span>`).join("");
+$("#lede").innerHTML = S.top || "";
+
+// ---------- percentile chart with season toggle
+const seasons = D.seasons;
+let current = seasons.length - 1;
+try { const saved = localStorage.getItem("season"); if (saved != null && seasons[+saved]) current = +saved; } catch (e) {}
+
+function renderSeg() {
+  $("#season-seg").innerHTML = seasons.map((s, i) =>
+    `<button type="button" id="season-${s.season}" aria-pressed="${i === current}" data-i="${i}">${s.season}</button>`).join("");
+}
+$("#season-seg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  current = +b.dataset.i;
+  try { localStorage.setItem("season", current); } catch (e) {}
+  renderSeg(); updateBars();
+});
+
+function renderBars() {
+  $("#pgroups").innerHTML = D.percentileGroups.map(([title, cols]) => `
+    <div><div class="pgroup-title">${esc(title)}</div>
+      ${cols.map(c => `<div class="prow" data-col="${c}" data-tip="" tabindex="0">
+        <span class="plabel">${esc(M[c].label)}</span><span class="pval"></span>
+        <div class="track"><div class="fill"></div><div class="dot"></div></div></div>`).join("")}
+    </div>`).join("");
+  updateBars();
+}
+function updateBars() {
+  const s = seasons[current];
+  $("#pct-sub").textContent = `vs. the ${s.league} qualified hitters (502+ PA) in ${s.season} · 100 = best` +
+    (s.qualified ? "" : ` · ${s.pa} PA that year, below qualifying; ranked against qualified hitters for reference`);
+  document.querySelectorAll(".prow").forEach(row => {
+    const c = row.dataset.col, st = s.stats[c];
+    const p = st && st.p != null ? st.p : null;
+    $(".pval", row).textContent = st ? st.v : "—";
+    const fill = $(".fill", row), dot = $(".dot", row);
+    fill.style.width = p == null ? "0" : p + "%";
+    fill.style.backgroundColor = p == null ? "transparent" : pColor(p, .85);
+    dot.style.left = p == null ? "0" : p + "%";
+    dot.style.background = p == null ? "transparent" : pColor(p);
+    dot.style.borderColor = p == null ? "transparent" : "";
+    dot.style.color = p != null && strong(p) ? "#fff" : "var(--ink)";
+    dot.textContent = p == null ? "" : p;
+    const id = String(++tipId);
+    tips.set(id, `<b>${esc(M[c].label)} · ${esc(st ? st.v : "—")}</b>${s.season} · ${st ? standing(st) : "No data"}<div class="t-def">${esc(M[c].def)}</div>`);
+    row.dataset.tip = id;
+  });
+}
+
+// ---------- section blocks
+function prose(key, title) { return `<div class="prose"><h2>${esc(title)}</h2>${S[key] || ""}</div>`; }
+
+function seasonTable(cols, extra) {
+  const head = `<tr><th></th><th>${extra[0]}</th>${cols.map(c =>
+    `<th class="m" ${tipAttr(`<b>${esc(M[c].label)}</b>${esc(M[c].def)}`)}>${esc(M[c].label)}</th>`).join("")}</tr>`;
+  const body = seasons.map(s => `<tr><td class="rowh">${s.season}</td><td>${s[extra[1]]}</td>${cols.map(c => {
+    const st = s.stats[c];
+    const bg = st.p != null ? `style="background:${pColor(st.p, .55)}"` : "";
+    return `<td ${bg} ${tipAttr(`<b>${s.season} · ${esc(M[c].label)} ${esc(st.v)}</b>${standing(st)}`)}>${esc(st.v)}</td>`;
+  }).join("")}</tr>`).join("");
+  const last = seasons[seasons.length - 1];
+  const avg = `<tr class="avg"><td class="rowh">${last.season} avg</td><td>—</td>${cols.map(c => `<td>${esc(last.stats[c].avg)}</td>`).join("")}</tr>`;
+  return `<div class="exhibit"><div class="scroll"><table>${head}${body}${avg}</table></div>
+    <div class="legend"><span>Worse<span class="scale" style="background:linear-gradient(90deg,${pColor(0)},${pColor(50)},${pColor(100)})"></span>Better</span>
+    <span>Shading: percentile vs. qualified hitters that season. Hover a cell for rank.</span></div></div>`;
+}
+
+function platoonChart() {
+  const rows = D.platoon, L = rows.find(r => r.key === "lhp"), R = rows.find(r => r.key === "rhp");
+  if (!L || !R) return `<div class="exhibit"><p class="na">No platoon splits in the database.</p></div>`;
+  const lines = D.platoonCols.map(c => {
+    const l = L.stats[c], r = R.stats[c];
+    const lo = Math.min(l.lo, l.raw ?? l.lo, r.raw ?? r.lo), hi = Math.max(l.hi, l.raw ?? l.hi, r.raw ?? r.hi);
+    const pad = (hi - lo) * .06, a = lo - pad, b = hi + pad, x = v => ((v - a) / (b - a) * 100).toFixed(1) + "%";
+    const better = M[c].better ? (M[c].better === "lower" ? "Lower is better." : "Higher is better.") : "";
+    const t = `<b>${esc(M[c].label)}</b>vs LHP ${esc(l.v)} · vs RHP ${esc(r.v)}<br>Qualified avg (full season) ${esc(l.avg)}<div class="t-def">${esc(M[c].def)} ${better}</div>`;
+    return `<div class="lrow" ${tipAttr(t)}><span class="plabel">${esc(M[c].label)}</span>
+      <div class="ltrack"><span class="lavg" style="left:${x(l.avgRaw)}"></span>
+        ${l.raw != null ? `<span class="ldot" style="left:${x(l.raw)};background:var(--lhp)"></span>` : ""}
+        ${r.raw != null ? `<span class="ldot" style="left:${x(r.raw)};background:var(--rhp)"></span>` : ""}</div>
+      <span class="lvals"><span style="color:var(--lhp)">${esc(l.v)}</span> · <span style="color:var(--rhp)">${esc(r.v)}</span></span></div>`;
+  }).join("");
+  return `<div class="exhibit"><p class="pa-note">${P.season}: ${L.pa} PA vs LHP · ${R.pa} PA vs RHP</p>${lines}
+    <div class="legend"><span><span class="key" style="background:var(--lhp)"></span>vs LHP</span>
+    <span><span class="key" style="background:var(--rhp)"></span>vs RHP</span>
+    <span><span class="key tick"></span>Qualified avg</span><span>Scale: the middle 90% of qualified hitters.</span></div></div>`;
+}
+
+let pitchTab = 0;
+function pitchExhibit() {
+  const g = D.pitch;
+  if (!g.length) return `<div class="exhibit"><p class="na">No pitch-group data.</p></div>`;
+  const tabs = `<div class="seg" role="tablist" aria-label="Pitch group">${g.map((x, i) =>
+    `<button type="button" role="tab" id="tab-${x.group}" aria-selected="${i === pitchTab}" data-i="${i}">${x.group[0].toUpperCase() + x.group.slice(1)}<small>${x.pa} PA</small></button>`).join("")}</div>`;
+  return `<div class="exhibit">${tabs}<div id="pitch-panel" role="tabpanel"></div><div id="pitch-mix"></div></div>`;
+}
+function renderPitchPanel() {
+  const x = D.pitch[pitchTab];
+  document.querySelectorAll("#sec-pitch [role=tab]").forEach((b, i) => b.setAttribute("aria-selected", i === pitchTab));
+  $("#pitch-panel").innerHTML = `<p class="sub" style="margin:12px 0 4px">${x.pitches.toLocaleString()} ${x.group} pitches seen · ${x.pa} PA ended on one. Ranked vs. qualified hitters on ${x.group} pitches.</p>` +
+    D.pitchCols.map(c => {
+      const st = x.stats[c], p = st.p;
+      const note = c === "pitch_share" ? `Qualified avg ${esc(x.leagueShare)}` : standing(st);
+      const scope = ["pitch_share", "chase_pct", "whiff_pct", "swing_score"].includes(c) ? "Counts every pitch of this group." : "Counts only PA that ended on this group.";
+      const t = `<b>${esc(M[c].label)} vs. ${x.group} · ${esc(st.v)}</b>${note}<div class="t-def">${esc(M[c].def)} ${scope}</div>`;
+      const bar = p == null
+        ? `<span class="na">avg ${esc(c === "pitch_share" ? x.leagueShare : st.avg)}</span>`
+        : `<div class="track"><div class="fill" style="width:${p}%;background:${pColor(p, .85)}"></div><div class="dot" style="left:${p}%;background:${pColor(p)};color:${strong(p) ? "#fff" : "var(--ink)"}">${p}</div></div>`;
+      return `<div class="prow" ${tipAttr(t)}><span class="plabel">${esc(M[c].label)}</span><span class="pval">${esc(st.v)}</span>${bar}</div>`;
+    }).join("");
+}
+function renderMix() {
+  const g = D.pitch, years = [...new Set(g.flatMap(x => x.history.map(h => h.season)))].sort();
+  const colors = ["var(--mix1)", "var(--mix2)", "var(--mix3)"];
+  const bar = (label, parts, tipHtml) => `<div class="mixrow" ${tipAttr(tipHtml)}><span>${label}</span><div class="mixbar">${parts.map((p, i) =>
+    `<span style="width:${(p.raw * 100).toFixed(2)}%;background:${colors[i]};color:var(--mixink${i + 1})">${p.raw >= .09 ? esc(p.v) : ""}</span>`).join("")}</div></div>`;
+  const rows = years.map(y => {
+    const parts = g.map(x => { const h = x.history.find(h => h.season === y); return { raw: h ? h.shareRaw : 0, v: h ? h.share : "—" }; });
+    return bar(y, parts, `<b>Pitch mix he saw, ${y}</b>` + g.map((x, i) => `${x.group}: ${esc(parts[i].v)}`).join("<br>"));
+  });
+  rows.push(bar(`${P.season} avg`, g.map(x => ({ raw: x.leagueShareRaw, v: x.leagueShare })),
+    `<b>Qualified hitters, ${P.season}</b>` + g.map(x => `${x.group}: ${esc(x.leagueShare)}`).join("<br>")));
+  $("#pitch-mix").innerHTML = `<div class="mix"><h3>How pitchers attack him</h3>${rows.join("")}
+    <div class="legend">${g.map((x, i) => `<span><span class="key" style="background:${colors[i]};border-radius:2px"></span>${x.group}</span>`).join("")}</div></div>`;
+}
+
+function renderSections() {
+  $("#sec-expected").innerHTML = prose("expected", "Expected stats") + seasonTable(D.tables.expected, ["PA", "pa"]);
+  $("#sec-batted").innerHTML = prose("batted", "Batted-ball profile") + seasonTable(D.tables.batted, ["BBE", "bbe"]);
+  $("#sec-discipline").innerHTML = prose("discipline", "Plate discipline") + seasonTable(D.tables.discipline, ["PA", "pa"]);
+  $("#sec-platoon").innerHTML = prose("platoon", "Platoon profile") + platoonChart();
+  $("#sec-pitch").innerHTML = prose("pitch", "Vs. pitch type") + pitchExhibit();
+  $("#sec-pitch [role=tablist]")?.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return; pitchTab = +b.dataset.i; renderPitchPanel();
+  });
+  if (D.pitch.length) { renderPitchPanel(); renderMix(); }
+  $("#sec-synthesis").innerHTML = prose("synthesis", "Synthesis");
+}
+
+$("#foot").innerHTML = `${S.notes ? `<div>${S.notes}</div>` : ""}
+  <p>Every number, chart and table on this page is computed by code from a pitch-by-pitch MLB database (data through ${esc(P.dataThrough)}). The writing is by Claude, working only from the same numbers. Expected stats (xwOBA, xBA, xISO) come from a house model. Report: ${esc(D.report.source)}.</p>`;
+
+function renderAll() { readPalette(); renderSeg(); renderBars(); renderSections(); }
+renderAll();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderAll);
+new MutationObserver(renderAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>

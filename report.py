@@ -5,9 +5,13 @@
 
 Flow: system prompt (prompts/system_<version>.md with the method inserted)
       + data packet (data.py) -> Claude (streamed) -> reports/<player>_<time>.md
+      -> interactive page with charts (html_report.py) -> reports/html/<player>.html
 
 Every report is saved with a .json record of exactly what produced it (prompt
 version, model, effort, the packet, token use and cost). The evals use that record.
+
+Reuse: if a saved report was made from the same instructions, data and settings, it is
+reused instead of calling Claude again (no cost). --fresh always writes a new one.
 """
 
 import argparse
@@ -22,6 +26,7 @@ import anthropic
 from dotenv import load_dotenv
 
 import data
+import html_report
 
 HERE = Path(__file__).resolve().parent
 load_dotenv(HERE / ".env")  # ANTHROPIC_API_KEY
@@ -50,10 +55,38 @@ def build_user_message(player, packet):
             f"Write the hitter report on {player}.")
 
 
-def write_report(player, version="v4", effort="high"):
+def fingerprint(system, packet, model, effort):
+    """Identifies everything that shapes a report: instructions, data, model and effort."""
+    return hashlib.sha256("\n\0".join([system, packet, model, effort]).encode()).hexdigest()[:16]
+
+
+def find_saved(slug, fp):
+    """The newest saved report with this fingerprint, or None. Older records without a
+    stored fingerprint are matched from the prompt and packet they saved."""
+    for path in sorted((HERE / "reports").glob(f"{slug}_*.json"), reverse=True):
+        r = json.loads(path.read_text())
+        saved = r.get("fingerprint") or fingerprint(r["system_prompt"], r["packet"], r["model_requested"], r["effort"])
+        if saved == fp and path.with_suffix(".md").exists():
+            return path.with_suffix(".md")
+    return None
+
+
+def write_report(player, version="v5", effort="high", fresh=False):
     system = build_system_prompt(version)
     packet = data.get_hitter_data(player)
     full_name = packet.splitlines()[0].removeprefix("# Data packet: ").strip()
+    slug = re.sub(r"[^a-z0-9]+", "-", full_name.lower()).strip("-")
+    fp = fingerprint(system, packet, MODEL, effort)
+
+    saved = None if fresh else find_saved(slug, fp)
+    if saved:
+        print(saved.read_text())
+        print(f"Reused {saved.relative_to(HERE)}: same instructions, data and settings, so no new "
+              "call to Claude ($0). Use --fresh to write a new one.", file=sys.stderr)
+        page = html_report.write(full_name, saved)
+        print(f"Page: {page.relative_to(HERE)}", file=sys.stderr)
+        return saved
+
     user = build_user_message(full_name, packet)
 
     client = anthropic.Anthropic()
@@ -91,7 +124,6 @@ def write_report(player, version="v4", effort="high"):
     cost = (usage.input_tokens * PRICE_PER_MTOK["input"] + usage.output_tokens * PRICE_PER_MTOK["output"]) / 1e6
 
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    slug = re.sub(r"[^a-z0-9]+", "-", full_name.lower()).strip("-")
     out_dir = HERE / "reports"
     out_dir.mkdir(exist_ok=True)
     md_path = out_dir / f"{slug}_{stamp}.md"
@@ -100,6 +132,7 @@ def write_report(player, version="v4", effort="high"):
         "player": full_name,
         "created": datetime.now().isoformat(timespec="seconds"),
         "prompt_version": version,
+        "fingerprint": fp,
         "system_prompt_sha256": hashlib.sha256(system.encode()).hexdigest()[:12],
         "system_prompt": system,  # the assembled prompt, method and glossary included
         "model_requested": MODEL,
@@ -118,17 +151,22 @@ def write_report(player, version="v4", effort="high"):
     print(f"\nSaved {md_path.relative_to(HERE)} (+ .json) · {usage.input_tokens:,} in / "
           f"{usage.output_tokens:,} out tokens · ${cost:.3f} · {record['report_words']} words",
           file=sys.stderr)
+
+    # The page: charts and tables drawn by code from the database, with the report's text.
+    page = html_report.write(full_name, md_path)
+    print(f"Page: {page.relative_to(HERE)}", file=sys.stderr)
     return md_path
 
 
 def main():
     p = argparse.ArgumentParser(description="Write a hitter report with Claude.")
     p.add_argument("player")
-    p.add_argument("--prompt", default="v4", help="system prompt version (prompts/system_<v>.md)")
+    p.add_argument("--prompt", default="v5", help="system prompt version (prompts/system_<v>.md)")
     p.add_argument("--effort", default="high", choices=["low", "medium", "high", "xhigh", "max"])
+    p.add_argument("--fresh", action="store_true", help="write a new report even if a matching one is saved")
     args = p.parse_args()
     try:
-        write_report(args.player, args.prompt, args.effort)
+        write_report(args.player, args.prompt, args.effort, args.fresh)
     except ValueError as e:  # name not found / ambiguous
         sys.exit(str(e))
 

@@ -1,0 +1,357 @@
+<title>__TITLE__ Hitter Profile</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: a scouting-report spread. Masthead, percentile card, then each section as
+   prose on the left and its exhibit (table or chart) on the right; stacks on phones. */
+:root {
+  --bg: #f4f5f7; --paper: #ffffff; --ink: #15181e; --muted: #5b6270; --rule: #e0e3e9;
+  --accent: #1d3557; --chip: #eaedf2;
+  --good: #d22d49; --mid: #c6cad2; --bad: #3661ad;
+  --lhp: #b8720a; --rhp: #1f7b85;
+  --mix1: #1d3557; --mix2: #5f7fa8; --mix3: #b3c3d9; --mixink1: #fff; --mixink2: #fff; --mixink3: #15181e;
+  --display: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  --ui: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --prose: "Source Serif 4", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1014; --paper: #161920; --ink: #e8eaef; --muted: #9ba2ae; --rule: #2a2f39;
+  --accent: #a9c1e3; --chip: #222731;
+  --good: #e2475f; --mid: #4b515c; --bad: #4f80d4;
+  --lhp: #e0a03a; --rhp: #4cb2bc;
+  --mix1: #a9c1e3; --mix2: #6c87ad; --mix3: #3b4c66; --mixink1: #0e1014; --mixink2: #fff; --mixink3: #e8eaef;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0e1014; --paper: #161920; --ink: #e8eaef; --muted: #9ba2ae; --rule: #2a2f39;
+  --accent: #a9c1e3; --chip: #222731;
+  --good: #e2475f; --mid: #4b515c; --bad: #4f80d4;
+  --lhp: #e0a03a; --rhp: #4cb2bc;
+  --mix1: #a9c1e3; --mix2: #6c87ad; --mix3: #3b4c66; --mixink1: #0e1014; --mixink2: #fff; --mixink3: #e8eaef;
+  color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--ui); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 28px; }
+
+/* Masthead */
+.eyebrow { font: 600 12px/1 var(--ui); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 700 clamp(44px, 8vw, 76px)/.92 var(--display); letter-spacing: -.01em; margin: 10px 0 14px; text-wrap: balance; text-transform: uppercase; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.meta span { background: var(--chip); border-radius: 4px; padding: 4px 9px; font-size: 13px; font-weight: 500; }
+.lede { font: 400 clamp(19px, 2.3vw, 23px)/1.45 var(--prose); max-width: 46em; margin: 0; text-wrap: pretty; }
+.lede p { margin: 0; }
+
+/* Cards */
+.card { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 22px clamp(16px, 3vw, 28px); min-width: 0; }
+.card-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 20px; margin-bottom: 14px; }
+h2 { font: 600 28px/1 var(--display); text-transform: uppercase; letter-spacing: .01em; margin: 0; text-wrap: balance; }
+h3 { font: 600 20px/1.1 var(--display); text-transform: uppercase; letter-spacing: .02em; margin: 0; }
+.sub { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
+
+/* Segmented controls and tabs */
+.seg { display: inline-flex; background: var(--chip); border-radius: 7px; padding: 3px; gap: 2px; }
+.seg button { font: 600 13px/1 var(--ui); color: var(--muted); background: transparent; border: 0; border-radius: 5px;
+  padding: 8px 12px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.seg button[aria-pressed="true"], .seg button[aria-selected="true"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / .12); }
+.seg button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.seg small { font-weight: 500; opacity: .75; margin-left: 4px; }
+
+/* Percentile bars */
+.pgroups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 8px 44px; }
+.pgroup-title { font: 600 11px/1 var(--ui); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 14px 0 4px; }
+.prow { display: grid; grid-template-columns: minmax(7.5em, 9.5em) 3.6em 1fr; align-items: center; gap: 12px; padding: 7px 4px; border-radius: 6px; cursor: default; }
+.prow:hover, .prow:focus-visible { background: var(--chip); }
+.plabel { font-weight: 500; border-bottom: 1px dotted var(--muted); justify-self: start; line-height: 1.2; }
+.pval { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+.track { position: relative; height: 8px; background: var(--chip); border-radius: 4px; margin-right: 14px; }
+.fill { position: absolute; inset: 0 auto 0 0; border-radius: 4px; transition: width .45s ease, background-color .45s ease; }
+.dot { position: absolute; top: 50%; width: 28px; height: 28px; margin-left: -14px; transform: translateY(-50%); border-radius: 50%;
+  border: 2px solid var(--paper); display: grid; place-items: center; font: 700 11px/1 var(--ui); font-variant-numeric: tabular-nums;
+  transition: left .45s ease, background-color .45s ease; }
+.na { color: var(--muted); font-size: 13px; }
+
+/* Sections */
+.section { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px 36px; align-items: start; }
+.section .prose h2 { margin-bottom: 12px; }
+.prose { font: 400 17px/1.62 var(--prose); min-width: 0; }
+.prose p { margin: 0 0 1em; max-width: 36em; }
+.exhibit { min-width: 0; }
+.full .prose p { max-width: 42em; }
+@media (max-width: 860px) { .section { grid-template-columns: minmax(0, 1fr); } }
+
+/* Tables */
+.scroll { overflow-x: auto; }
+table { border-collapse: separate; border-spacing: 3px; width: 100%; font-variant-numeric: tabular-nums; }
+th { font: 600 12px/1.2 var(--ui); color: var(--muted); text-align: center; padding: 6px 4px; vertical-align: bottom; }
+th.m { border-bottom: 1px dotted var(--muted); cursor: default; }
+td { text-align: center; padding: 8px 6px; border-radius: 4px; white-space: nowrap; }
+td.rowh { font-weight: 600; text-align: left; padding-left: 2px; }
+tr.avg td { color: var(--muted); font-style: italic; border-top: 1px solid var(--rule); }
+td[tabindex] { cursor: default; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; color: var(--muted); font-size: 12px; margin-top: 10px; }
+.scale { display: inline-block; width: 90px; height: 8px; border-radius: 4px; vertical-align: middle; margin: 0 6px; }
+
+/* Platoon dot plot */
+.lrow { display: grid; grid-template-columns: 6.5em 1fr 7.8em; gap: 12px; align-items: center; padding: 8px 4px; border-radius: 6px; }
+.lrow:hover, .lrow:focus-visible { background: var(--chip); }
+.ltrack { position: relative; height: 22px; }
+.ltrack::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: var(--rule); }
+.lavg { position: absolute; top: 2px; bottom: 2px; width: 2px; margin-left: -1px; background: var(--muted); }
+.ldot { position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; border: 2px solid var(--paper); }
+.lvals { font-size: 13px; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.key { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; margin-right: 5px; }
+.key.tick { width: 2px; height: 12px; border-radius: 0; background: var(--muted); }
+.pa-note { font-size: 13px; color: var(--muted); margin: 0 0 6px; }
+
+/* Pitch mix */
+.mix { display: grid; gap: 6px; margin-top: 18px; }
+.mixrow { display: grid; grid-template-columns: 6.5em 1fr; gap: 12px; align-items: center; font-size: 13px; }
+.mixbar { display: flex; height: 22px; border-radius: 4px; overflow: hidden; }
+.mixbar span { display: grid; place-items: center; font: 600 11px/1 var(--ui); color: #fff; min-width: 0; overflow: hidden; }
+
+/* Footer */
+footer { color: var(--muted); font-size: 13px; display: grid; gap: 8px; border-top: 1px solid var(--rule); padding-top: 18px; }
+footer p { margin: 0; max-width: 70em; }
+
+/* Hover card */
+#tip { position: fixed; z-index: 20; max-width: 280px; background: var(--ink); color: var(--paper); border-radius: 8px;
+  padding: 10px 12px; font-size: 13px; line-height: 1.4; pointer-events: none; box-shadow: 0 6px 20px rgb(0 0 0 / .25); }
+#tip b { display: block; font-size: 14px; margin-bottom: 2px; }
+#tip .t-def { opacity: .8; margin-top: 6px; }
+
+@media (prefers-reduced-motion: reduce) { .fill, .dot { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="name"></h1>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div class="lede" id="lede"></div>
+
+  <section class="card" aria-labelledby="pct-h">
+    <div class="card-head">
+      <div>
+        <h2 id="pct-h">Percentile rankings</h2>
+        <p class="sub" id="pct-sub"></p>
+      </div>
+      <div class="seg" id="season-seg" role="group" aria-label="Season"></div>
+    </div>
+    <div class="pgroups" id="pgroups"></div>
+  </section>
+
+  <section class="card section" id="sec-expected"></section>
+  <section class="card section" id="sec-batted"></section>
+  <section class="card section" id="sec-discipline"></section>
+  <section class="card section" id="sec-platoon"></section>
+  <section class="card section" id="sec-pitch"></section>
+  <section class="card full" id="sec-synthesis"></section>
+
+  <footer id="foot"></footer>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+const D = /*__DATA__*/null;
+const M = D.metrics;
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const ordinal = n => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th");
+
+// ---------- percentile colors (blue = worse, grey = average, red = better), read from the theme
+function hex(v) { const h = getComputedStyle(document.documentElement).getPropertyValue(v).trim().replace("#", "");
+  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
+let PAL;
+function readPalette() { PAL = { bad: hex("--bad"), mid: hex("--mid"), good: hex("--good") }; }
+function pColor(p, alpha = 1) {
+  const [a, b, t] = p < 50 ? [PAL.bad, PAL.mid, p / 50] : [PAL.mid, PAL.good, (p - 50) / 50];
+  const c = a.map((x, i) => Math.round(x + (b[i] - x) * t));
+  return `rgb(${c.join(" ")} / ${alpha})`;
+}
+const strong = p => Math.abs(p - 50) > 22;
+
+// ---------- hover card
+const tip = $("#tip");
+const tips = new Map(); let tipId = 0;
+function tipAttr(html) { const id = ++tipId; tips.set(String(id), html); return `data-tip="${id}" tabindex="0"`; }
+function standing(s) {
+  if (s.rank == null) return `Qualified avg ${esc(s.avg)}`;
+  return `Rank ${s.rank} of ${s.of} · ${ordinal(s.p)} percentile<br>Qualified avg ${esc(s.avg)}`;
+}
+function showTip(el, x, y) {
+  tip.innerHTML = tips.get(el.dataset.tip); tip.hidden = false;
+  const r = tip.getBoundingClientRect(), pad = 12;
+  let left = x + 14, top = y + 14;
+  if (left + r.width > innerWidth - pad) left = Math.max(pad, x - r.width - 14);
+  if (top + r.height > innerHeight - pad) top = Math.max(pad, y - r.height - 14);
+  tip.style.left = left + "px"; tip.style.top = top + "px";
+}
+document.addEventListener("pointermove", e => {
+  const el = e.target.closest("[data-tip]");
+  if (el) showTip(el, e.clientX, e.clientY); else tip.hidden = true;
+});
+document.addEventListener("focusin", e => {
+  const el = e.target.closest("[data-tip]"); if (!el) return;
+  const r = el.getBoundingClientRect(); showTip(el, r.left, r.bottom);
+});
+document.addEventListener("focusout", () => { tip.hidden = true; });
+document.addEventListener("scroll", () => { tip.hidden = true; }, { passive: true });
+
+// ---------- header and text
+const P = D.player, S = D.report.sections;
+$("#eyebrow").textContent = `Hitter profile · ${P.season} season`;
+$("#name").textContent = P.name;
+$("#meta").innerHTML = [P.pos, P.team, `Age ${P.age}`, `Bats ${P.bats} / Throws ${P.throws}`, `${P.pa} PA`]
+  .map(t => `<span>${esc(t)}</span>`).join("");
+$("#lede").innerHTML = S.top || "";
+
+// ---------- percentile chart with season toggle
+const seasons = D.seasons;
+let current = seasons.length - 1;
+try { const saved = localStorage.getItem("season"); if (saved != null && seasons[+saved]) current = +saved; } catch (e) {}
+
+function renderSeg() {
+  $("#season-seg").innerHTML = seasons.map((s, i) =>
+    `<button type="button" id="season-${s.season}" aria-pressed="${i === current}" data-i="${i}">${s.season}</button>`).join("");
+}
+$("#season-seg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  current = +b.dataset.i;
+  try { localStorage.setItem("season", current); } catch (e) {}
+  renderSeg(); updateBars();
+});
+
+function renderBars() {
+  $("#pgroups").innerHTML = D.percentileGroups.map(([title, cols]) => `
+    <div><div class="pgroup-title">${esc(title)}</div>
+      ${cols.map(c => `<div class="prow" data-col="${c}" data-tip="" tabindex="0">
+        <span class="plabel">${esc(M[c].label)}</span><span class="pval"></span>
+        <div class="track"><div class="fill"></div><div class="dot"></div></div></div>`).join("")}
+    </div>`).join("");
+  updateBars();
+}
+function updateBars() {
+  const s = seasons[current];
+  $("#pct-sub").textContent = `vs. the ${s.league} qualified hitters (502+ PA) in ${s.season} · 100 = best` +
+    (s.qualified ? "" : ` · ${s.pa} PA that year, below qualifying; ranked against qualified hitters for reference`);
+  document.querySelectorAll(".prow").forEach(row => {
+    const c = row.dataset.col, st = s.stats[c];
+    const p = st && st.p != null ? st.p : null;
+    $(".pval", row).textContent = st ? st.v : "—";
+    const fill = $(".fill", row), dot = $(".dot", row);
+    fill.style.width = p == null ? "0" : p + "%";
+    fill.style.backgroundColor = p == null ? "transparent" : pColor(p, .85);
+    dot.style.left = p == null ? "0" : p + "%";
+    dot.style.background = p == null ? "transparent" : pColor(p);
+    dot.style.borderColor = p == null ? "transparent" : "";
+    dot.style.color = p != null && strong(p) ? "#fff" : "var(--ink)";
+    dot.textContent = p == null ? "" : p;
+    const id = String(++tipId);
+    tips.set(id, `<b>${esc(M[c].label)} · ${esc(st ? st.v : "—")}</b>${s.season} · ${st ? standing(st) : "No data"}<div class="t-def">${esc(M[c].def)}</div>`);
+    row.dataset.tip = id;
+  });
+}
+
+// ---------- section blocks
+function prose(key, title) { return `<div class="prose"><h2>${esc(title)}</h2>${S[key] || ""}</div>`; }
+
+function seasonTable(cols, extra) {
+  const head = `<tr><th></th><th>${extra[0]}</th>${cols.map(c =>
+    `<th class="m" ${tipAttr(`<b>${esc(M[c].label)}</b>${esc(M[c].def)}`)}>${esc(M[c].label)}</th>`).join("")}</tr>`;
+  const body = seasons.map(s => `<tr><td class="rowh">${s.season}</td><td>${s[extra[1]]}</td>${cols.map(c => {
+    const st = s.stats[c];
+    const bg = st.p != null ? `style="background:${pColor(st.p, .55)}"` : "";
+    return `<td ${bg} ${tipAttr(`<b>${s.season} · ${esc(M[c].label)} ${esc(st.v)}</b>${standing(st)}`)}>${esc(st.v)}</td>`;
+  }).join("")}</tr>`).join("");
+  const last = seasons[seasons.length - 1];
+  const avg = `<tr class="avg"><td class="rowh">${last.season} avg</td><td>—</td>${cols.map(c => `<td>${esc(last.stats[c].avg)}</td>`).join("")}</tr>`;
+  return `<div class="exhibit"><div class="scroll"><table>${head}${body}${avg}</table></div>
+    <div class="legend"><span>Worse<span class="scale" style="background:linear-gradient(90deg,${pColor(0)},${pColor(50)},${pColor(100)})"></span>Better</span>
+    <span>Shading: percentile vs. qualified hitters that season. Hover a cell for rank.</span></div></div>`;
+}
+
+function platoonChart() {
+  const rows = D.platoon, L = rows.find(r => r.key === "lhp"), R = rows.find(r => r.key === "rhp");
+  if (!L || !R) return `<div class="exhibit"><p class="na">No platoon splits in the database.</p></div>`;
+  const lines = D.platoonCols.map(c => {
+    const l = L.stats[c], r = R.stats[c];
+    const lo = Math.min(l.lo, l.raw ?? l.lo, r.raw ?? r.lo), hi = Math.max(l.hi, l.raw ?? l.hi, r.raw ?? r.hi);
+    const pad = (hi - lo) * .06, a = lo - pad, b = hi + pad, x = v => ((v - a) / (b - a) * 100).toFixed(1) + "%";
+    const better = M[c].better ? (M[c].better === "lower" ? "Lower is better." : "Higher is better.") : "";
+    const t = `<b>${esc(M[c].label)}</b>vs LHP ${esc(l.v)} · vs RHP ${esc(r.v)}<br>Qualified avg (full season) ${esc(l.avg)}<div class="t-def">${esc(M[c].def)} ${better}</div>`;
+    return `<div class="lrow" ${tipAttr(t)}><span class="plabel">${esc(M[c].label)}</span>
+      <div class="ltrack"><span class="lavg" style="left:${x(l.avgRaw)}"></span>
+        ${l.raw != null ? `<span class="ldot" style="left:${x(l.raw)};background:var(--lhp)"></span>` : ""}
+        ${r.raw != null ? `<span class="ldot" style="left:${x(r.raw)};background:var(--rhp)"></span>` : ""}</div>
+      <span class="lvals"><span style="color:var(--lhp)">${esc(l.v)}</span> · <span style="color:var(--rhp)">${esc(r.v)}</span></span></div>`;
+  }).join("");
+  return `<div class="exhibit"><p class="pa-note">${P.season}: ${L.pa} PA vs LHP · ${R.pa} PA vs RHP</p>${lines}
+    <div class="legend"><span><span class="key" style="background:var(--lhp)"></span>vs LHP</span>
+    <span><span class="key" style="background:var(--rhp)"></span>vs RHP</span>
+    <span><span class="key tick"></span>Qualified avg</span><span>Scale: the middle 90% of qualified hitters.</span></div></div>`;
+}
+
+let pitchTab = 0;
+function pitchExhibit() {
+  const g = D.pitch;
+  if (!g.length) return `<div class="exhibit"><p class="na">No pitch-group data.</p></div>`;
+  const tabs = `<div class="seg" role="tablist" aria-label="Pitch group">${g.map((x, i) =>
+    `<button type="button" role="tab" id="tab-${x.group}" aria-selected="${i === pitchTab}" data-i="${i}">${x.group[0].toUpperCase() + x.group.slice(1)}<small>${x.pa} PA</small></button>`).join("")}</div>`;
+  return `<div class="exhibit">${tabs}<div id="pitch-panel" role="tabpanel"></div><div id="pitch-mix"></div></div>`;
+}
+function renderPitchPanel() {
+  const x = D.pitch[pitchTab];
+  document.querySelectorAll("#sec-pitch [role=tab]").forEach((b, i) => b.setAttribute("aria-selected", i === pitchTab));
+  $("#pitch-panel").innerHTML = `<p class="sub" style="margin:12px 0 4px">${x.pitches.toLocaleString()} ${x.group} pitches seen · ${x.pa} PA ended on one. Ranked vs. qualified hitters on ${x.group} pitches.</p>` +
+    D.pitchCols.map(c => {
+      const st = x.stats[c], p = st.p;
+      const note = c === "pitch_share" ? `Qualified avg ${esc(x.leagueShare)}` : standing(st);
+      const scope = ["pitch_share", "chase_pct", "whiff_pct", "swing_score"].includes(c) ? "Counts every pitch of this group." : "Counts only PA that ended on this group.";
+      const t = `<b>${esc(M[c].label)} vs. ${x.group} · ${esc(st.v)}</b>${note}<div class="t-def">${esc(M[c].def)} ${scope}</div>`;
+      const bar = p == null
+        ? `<span class="na">avg ${esc(c === "pitch_share" ? x.leagueShare : st.avg)}</span>`
+        : `<div class="track"><div class="fill" style="width:${p}%;background:${pColor(p, .85)}"></div><div class="dot" style="left:${p}%;background:${pColor(p)};color:${strong(p) ? "#fff" : "var(--ink)"}">${p}</div></div>`;
+      return `<div class="prow" ${tipAttr(t)}><span class="plabel">${esc(M[c].label)}</span><span class="pval">${esc(st.v)}</span>${bar}</div>`;
+    }).join("");
+}
+function renderMix() {
+  const g = D.pitch, years = [...new Set(g.flatMap(x => x.history.map(h => h.season)))].sort();
+  const colors = ["var(--mix1)", "var(--mix2)", "var(--mix3)"];
+  const bar = (label, parts, tipHtml) => `<div class="mixrow" ${tipAttr(tipHtml)}><span>${label}</span><div class="mixbar">${parts.map((p, i) =>
+    `<span style="width:${(p.raw * 100).toFixed(2)}%;background:${colors[i]};color:var(--mixink${i + 1})">${p.raw >= .09 ? esc(p.v) : ""}</span>`).join("")}</div></div>`;
+  const rows = years.map(y => {
+    const parts = g.map(x => { const h = x.history.find(h => h.season === y); return { raw: h ? h.shareRaw : 0, v: h ? h.share : "—" }; });
+    return bar(y, parts, `<b>Pitch mix he saw, ${y}</b>` + g.map((x, i) => `${x.group}: ${esc(parts[i].v)}`).join("<br>"));
+  });
+  rows.push(bar(`${P.season} avg`, g.map(x => ({ raw: x.leagueShareRaw, v: x.leagueShare })),
+    `<b>Qualified hitters, ${P.season}</b>` + g.map(x => `${x.group}: ${esc(x.leagueShare)}`).join("<br>")));
+  $("#pitch-mix").innerHTML = `<div class="mix"><h3>How pitchers attack him</h3>${rows.join("")}
+    <div class="legend">${g.map((x, i) => `<span><span class="key" style="background:${colors[i]};border-radius:2px"></span>${x.group}</span>`).join("")}</div></div>`;
+}
+
+function renderSections() {
+  $("#sec-expected").innerHTML = prose("expected", "Expected stats") + seasonTable(D.tables.expected, ["PA", "pa"]);
+  $("#sec-batted").innerHTML = prose("batted", "Batted-ball profile") + seasonTable(D.tables.batted, ["BBE", "bbe"]);
+  $("#sec-discipline").innerHTML = prose("discipline", "Plate discipline") + seasonTable(D.tables.discipline, ["PA", "pa"]);
+  $("#sec-platoon").innerHTML = prose("platoon", "Platoon profile") + platoonChart();
+  $("#sec-pitch").innerHTML = prose("pitch", "Vs. pitch type") + pitchExhibit();
+  $("#sec-pitch [role=tablist]")?.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return; pitchTab = +b.dataset.i; renderPitchPanel();
+  });
+  if (D.pitch.length) { renderPitchPanel(); renderMix(); }
+  $("#sec-synthesis").innerHTML = prose("synthesis", "Synthesis");
+}
+
+$("#foot").innerHTML = `${S.notes ? `<div>${S.notes}</div>` : ""}
+  <p>Every number, chart and table on this page is computed by code from a pitch-by-pitch MLB database (data through ${esc(P.dataThrough)}). The writing is by Claude, working only from the same numbers. Expected stats (xwOBA, xBA, xISO) come from a house model. Report: ${esc(D.report.source)}.</p>`;
+
+function renderAll() { readPalette(); renderSeg(); renderBars(); renderSections(); }
+renderAll();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderAll);
+new MutationObserver(renderAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>
