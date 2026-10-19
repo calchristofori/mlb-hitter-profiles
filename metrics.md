@@ -20,6 +20,7 @@ Units: rates like .383 are shown to three decimals; percentages to one decimal. 
 ## Results
 
 - **AVG, OBP, SLG** — standard definitions. Match Savant to within .001 on average; all qualified hitters within .002 except a rare outlier (largest .008, from late official-scoring changes).
+- **ISO** — isolated power: SLG − AVG, the extra bases per at-bat (each double adds one, each triple two, each home run three). Standard definition.
 - **BABIP** — (H − HR) ÷ (AB − SO − HR + SF).
 - **wOBA** — weighted on-base average with **house weights**: each event's run value comes from this database's run-expectancy tables for that season, scaled so league wOBA equals league OBP (the FanGraphs method). Formula: (uBB, HBP, 1B, 2B, 3B, HR, each × its weight) ÷ (AB + BB − IBB + SF + HBP). Runs about .002 above Savant and FanGraphs on average, up to ~.008 for big power hitters.
 - **K%** — strikeouts ÷ PA. **BB%** — walks (including intentional) ÷ PA. Both match Savant.
@@ -32,6 +33,7 @@ Built from this database, not copied from Savant. Always label them "(house mode
 - **xwOBA** — expected wOBA. Each tracked batted ball gets single/double/triple/HR probabilities from what balls with the same exit velocity and launch angle (1 mph × 1° cells, smoothed toward wider cells, season-specific) did that season. Ground balls (launch angle under 10°) and bunts are adjusted by the batter's sprint-speed tier. Walks, HBP and strikeouts count at actual value. Same denominator as wOBA. Runs about .004 above Savant's xwOBA on average; 89% of qualified hitters are within .010; correlation 0.99.
 - **xBA** — expected hits ÷ AB, same model. About .003 above Savant.
 - **xSLG** — expected total bases ÷ AB, same model. About .001 above Savant.
+- **xISO** — expected isolated power: xSLG − xBA, computed from the displayed values. The extra bases his contact should produce per at-bat. Not a Savant stat; FanGraphs and others publish versions on different models.
 - **wOBA − xwOBA (gap)** — results minus expected. Positive means results ran ahead of contact quality.
 
 ## Contact quality

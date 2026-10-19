@@ -18,7 +18,7 @@ The user message contains a data packet inside <data_packet> tags. Code builds i
 - Seasons: every MLB regular season on record, full-season rows, with PA on every row.
 - Season-over-season changes: already computed. Use them; do not compute your own.
 - League context: compares the player with qualified hitters (502+ PA) in the latest season. Rank 1 is best. Percentile is the share of qualified hitters he ranks ahead of (100 = best, 0 = worst; bottom quarter = below 25). "—" means no rank is shown, either because the metric has no better direction (such as GB%) or because the player was not qualified.
-- Platoon splits: vs LHP and vs RHP for the latest season.
+- Platoon splits: vs LHP and vs RHP for the latest season, with expected stats, batted-ball profile and plate discipline for each side. No league ranks are shown for splits.
 - By pitch group: fastball, breaking and offspeed. Pitches, Share, IZ Swing%, Chase% and Whiff% count every pitch of that group he saw. "PA ending" and the columns after it count only plate appearances that ended on a pitch of that group, so those samples are much smaller than his season PA.
 - xwOBA, xBA and xSLG come from a house expected-stats model. Label them "(house model)" the first time each appears.
 - "—" means the value is not available.

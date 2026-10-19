@@ -37,6 +37,8 @@ CONTEXT_METRICS = [
     ("wOBA", "woba", "higher"),
     ("xSLG", "xslg", "higher"),
     ("xBA", "xba", "higher"),
+    ("xISO", "xiso", "higher"),
+    ("ISO", "iso", "higher"),
     ("EV90", "ev90", "higher"),
     ("Avg EV", "avg_ev", "higher"),
     ("Hard-hit%", "hard_hit_pct", "higher"),
@@ -75,7 +77,7 @@ PITCH_GROUPS = ["fastball", "breaking", "offspeed"]
 
 # Season-over-season changes, computed here so the model never has to subtract.
 CHANGE_METRICS = [
-    ("xwOBA (house)", "xwoba"), ("wOBA", "woba"), ("BABIP", "babip"), ("EV90", "ev90"),
+    ("xwOBA (house)", "xwoba"), ("wOBA", "woba"), ("xISO", "xiso"), ("BABIP", "babip"), ("EV90", "ev90"),
     ("Hard-hit%", "hard_hit_pct"), ("Barrel%", "barrel_pct"), ("Sweet spot%", "sweet_spot_pct"),
     ("Pulled Air%", "pulled_fb_pct"), ("Pull%", "pull_pct"), ("LA median", "median_la"), ("LA SD", "sd_la"),
     ("IZ Swing - Chase", "swing_score"), ("IZ Swing%", "z_swing_pct"), ("Chase%", "chase_pct"),
@@ -107,7 +109,7 @@ def one(x):           # 106.6  (mph, degrees, ft/s)
 # How each column is displayed.
 FORMAT = {
     "xwoba": rate, "woba": rate, "xslg": rate, "xba": rate, "avg": rate, "obp": rate,
-    "slg": rate, "babip": rate, "iso": rate, "swing_score": rate,
+    "slg": rate, "babip": rate, "iso": rate, "xiso": rate, "swing_score": rate,
     "ev90": one, "avg_ev": one, "median_la": one, "sd_la": one, "sprint_speed": one,
 }
 
@@ -168,8 +170,11 @@ def resolve_player(cur, name):
 
 
 def add_derived(rows):
-    """The two computed numbers: IZ Swing - Chase and the wOBA - xwOBA gap."""
+    """The computed numbers: IZ Swing - Chase, the wOBA - xwOBA gap and xISO."""
     for r in rows:
+        # xISO from the displayed (3-decimal) xSLG and xBA, so readers can check it.
+        xslg, xba = r.get("xslg"), r.get("xba")
+        r["xiso"] = None if xslg is None or xba is None else round(xslg, 3) - round(xba, 3)
         r["swing_score"] = None if r["z_swing_pct"] is None or r["chase_pct"] is None else r["z_swing_pct"] - r["chase_pct"]
         r["gap"] = None if r["woba"] is None or r["xwoba"] is None else r["woba"] - r["xwoba"]
     return rows
@@ -229,14 +234,15 @@ def section_seasons(full):
           fmt("whiff_pct", r["whiff_pct"]), fmt("median_la", r["median_la"]), fmt("sd_la", r["sd_la"])]
          for r in full])
     results = table(
-        ["Season", "PA", "wOBA", "xwOBA (house)", "wOBA - xwOBA", "BABIP", "AVG", "OBP", "SLG", "HR", "Sprint speed (ft/s)"],
+        ["Season", "PA", "wOBA", "xwOBA (house)", "wOBA - xwOBA", "BABIP", "AVG", "OBP", "SLG", "ISO", "HR", "Sprint speed (ft/s)"],
         [[r["season"], r["pa"], fmt("woba", r["woba"]), fmt("xwoba", r["xwoba"]), signed_rate(r["gap"]),
           fmt("babip", r["babip"]), fmt("avg", r["avg"]), fmt("obp", r["obp"]), fmt("slg", r["slg"]),
-          r["hr"], fmt("sprint_speed", r["sprint_speed"])] for r in full])
+          fmt("iso", r["iso"]), r["hr"], fmt("sprint_speed", r["sprint_speed"])] for r in full])
     contact = table(
-        ["Season", "PA", "BBE", "xBA", "xSLG", "Avg EV", "Hard-hit%", "Barrel%", "Sweet spot%",
+        ["Season", "PA", "BBE", "xBA", "xSLG", "xISO", "Avg EV", "Hard-hit%", "Barrel%", "Sweet spot%",
          "GB%", "LD%", "FB%", "PU%", "Pull%", "Oppo%"],
-        [[r["season"], r["pa"], r["bbe"], fmt("xba", r["xba"]), fmt("xslg", r["xslg"]), fmt("avg_ev", r["avg_ev"]),
+        [[r["season"], r["pa"], r["bbe"], fmt("xba", r["xba"]), fmt("xslg", r["xslg"]),
+          fmt("xiso", r["xiso"]), fmt("avg_ev", r["avg_ev"]),
           pct(r["hard_hit_pct"]), pct(r["barrel_pct"]), pct(r["sweet_spot_pct"]), pct(r["gb_pct"]),
           pct(r["ld_pct"]), pct(r["fb_pct"]), pct(r["pu_pct"]), pct(r["pull_pct"]), pct(r["oppo_pct"])]
          for r in full])
@@ -326,13 +332,22 @@ def section_pitch_groups(groups, league, latest, min_pa):
 
 def section_splits(splits, season):
     label = {"vs_lhp": "vs LHP", "vs_rhp": "vs RHP"}
-    rows = [[label[r["split"]], r["pa"], fmt("woba", r["woba"]), fmt("xwoba", r["xwoba"]), signed_rate(r["gap"]),
-             fmt("ev90", r["ev90"]), pct(r["whiff_pct"]), pct(r["k_pct"]), pct(r["bb_pct"])]
-            for r in splits]
-    if not rows:
+    if not splits:
         return f"## {season} platoon splits\n\nNo split rows in the database."
-    return (f"## {season} platoon splits\n\n"
-            + table(["Split", "PA", "wOBA", "xwOBA (house)", "wOBA - xwOBA", "EV90", "Whiff%", "K%", "BB%"], rows))
+    batted = table(
+        ["Split", "PA", "BBE", "wOBA", "xwOBA (house)", "wOBA - xwOBA", "xBA", "xSLG", "xISO", "EV90",
+         "Hard-hit%", "Barrel%", "LA median", "LA SD", "Pulled Air%", "Pull%", "GB%"],
+        [[label[r["split"]], r["pa"], r["bbe"], fmt("woba", r["woba"]), fmt("xwoba", r["xwoba"]), signed_rate(r["gap"]),
+          fmt("xba", r["xba"]), fmt("xslg", r["xslg"]), fmt("xiso", r["xiso"]), fmt("ev90", r["ev90"]),
+          pct(r["hard_hit_pct"]), pct(r["barrel_pct"]), fmt("median_la", r["median_la"]), fmt("sd_la", r["sd_la"]),
+          pct(r["pulled_fb_pct"]), pct(r["pull_pct"]), pct(r["gb_pct"])] for r in splits])
+    discipline = table(
+        ["Split", "PA", "Pitches", "IZ Swing%", "Chase%", "IZ Swing - Chase", "Whiff%", "K%", "BB%"],
+        [[label[r["split"]], r["pa"], r["pitches"], pct(r["z_swing_pct"]), pct(r["chase_pct"]),
+          fmt("swing_score", r["swing_score"]), pct(r["whiff_pct"]), pct(r["k_pct"]), pct(r["bb_pct"])]
+         for r in splits])
+    return (f"## {season} platoon splits\n\n### Expected stats and batted-ball profile\n\n" + batted
+            + "\n\n### Plate discipline\n\n" + discipline)
 
 
 # ---------------------------------------------------------------- the packet
@@ -369,6 +384,7 @@ def get_hitter_data(name):
         "- Rates are per plate appearance or per batted ball; \"—\" means the value is not available.",
         "- xwOBA, xSLG, xBA come from a house expected-stats model (validated against Statcast; typical "
         "difference 3–7 points of xwOBA). Call them \"(house model)\".",
+        "- xISO is xSLG minus xBA (expected isolated power); ISO is SLG minus AVG.",
         "- IZ Swing - Chase is in-zone swing rate minus chase rate (generally higher is better). It is not a "
         "swing-decision score.",
         "- Pull% and Oppo% are approximate (about 4 points above Statcast); fine for trends.",
