@@ -22,5 +22,17 @@
     "dataThrough": "2026-09-27",
     "top": "Kwan is an extreme contact-and-patience hitter who almost never misses, rarely chases and sprays consistent line drives to all fields without any exit velocity behind them. He drives value by getting on base through a high batting average and a rising walk rate, not by doing damage.",
     "source": "steven-kwan_20261019_182941.md"
+  },
+  "cody-bellinger": {
+    "name": "Cody Bellinger",
+    "pos": "LF",
+    "team": "New York Yankees",
+    "age": 30,
+    "bats": "L",
+    "season": 2026,
+    "pa": 562,
+    "dataThrough": "2026-09-27",
+    "top": "Bellinger is a contact-and-launch hitter: he rarely misses, and he puts the ball in the air to his pull side at productive angles. Below-average exit velocity caps the damage, so his slightly above-average production comes through batting average rather than power.",
+    "source": "cody-bellinger_20261019_183421.md"
   }
 }
