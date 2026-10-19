@@ -7,8 +7,8 @@ the hitter report needs from the `mlb` database and returns it as one block of t
 (the "data packet") that later goes to the model.
 
 Design rules (agreed 2026-10-18):
-- Code computes, the model judges. Code does all arithmetic (gaps, swing-decision
-  score, league averages, ranks). Code does NOT apply the evaluation method
+- Code computes, the model judges. Code does all arithmetic (gaps, IZ Swing - Chase,
+  league averages, ranks). Code does NOT apply the evaluation method
   (sample-size labels, "gap >= .030", thresholds) — that is the model's job, and
   what the evals will test.
 - Numbers are formatted baseball-style here (.383, 26.3%), so the model can copy
@@ -168,7 +168,7 @@ def resolve_player(cur, name):
 
 
 def add_derived(rows):
-    """The two computed numbers: swing-decision score and the wOBA - xwOBA gap."""
+    """The two computed numbers: IZ Swing - Chase and the wOBA - xwOBA gap."""
     for r in rows:
         r["swing_score"] = None if r["z_swing_pct"] is None or r["chase_pct"] is None else r["z_swing_pct"] - r["chase_pct"]
         r["gap"] = None if r["woba"] is None or r["xwoba"] is None else r["woba"] - r["xwoba"]
@@ -248,7 +248,7 @@ def section_seasons(full):
     return ("## Seasons (full season, every MLB season on record)\n\n### Core (foundational metrics)\n\n" + core
             + "\n\n### Results vs. expected\n\n" + results
             + "\n\n### Contact quality and batted-ball shape\n\n" + contact
-            + "\n\n### Swing decisions\n\n" + swing)
+            + "\n\n### Plate discipline\n\n" + swing)
 
 
 def context_table(player_row, league, metrics, qualified):
@@ -369,7 +369,8 @@ def get_hitter_data(name):
         "- Rates are per plate appearance or per batted ball; \"—\" means the value is not available.",
         "- xwOBA, xSLG, xBA come from a house expected-stats model (validated against Statcast; typical "
         "difference 3–7 points of xwOBA). Call them \"(house model)\".",
-        "- IZ Swing - Chase is in-zone swing rate minus chase rate (higher is better).",
+        "- IZ Swing - Chase is in-zone swing rate minus chase rate (generally higher is better). It is not a "
+        "swing-decision score.",
         "- Pull% and Oppo% are approximate (about 4 points above Statcast); fine for trends.",
         "- FB% uses the Statcast definition: popups are counted separately (PU%), so it runs well below FanGraphs' FB%.",
         "- Sprint speed: about 27 ft/s is average, 30+ elite.",

@@ -42,7 +42,7 @@ The packet holds far more than a profile needs. Use the method to read all of it
 5. Do not speculate past the data. No predictions about what would happen under conditions the packet does not show.
 6. Missing data: if the packet lacks something the method mentions, skip it without comment. Mention a gap only when it changes how the reader should take a finding.
 7. Do not use 20–80 scouting grades.
-8. Use each metric's name exactly as the glossary defines it, and never treat two metrics as the same thing. For example, Pulled Air% is not FB%. Pull% and Oppo% are approximate: describe their direction or how they compare with average, never cite them as a precise level.
+8. Use each metric's name exactly as the glossary defines it, and never treat two metrics as the same thing. For example, Pulled Air% is not FB%. Never call IZ Swing − Chase a "swing-decision score" or a measure of decision quality; it shows how a hitter's swings split between strikes and balls. Pull% and Oppo% are approximate: describe their direction or how they compare with average, never cite them as a precise level.
 9. Never mention the evaluation method, its rules or its thresholds. The reader does not know the method exists. State findings in baseball terms: "his fastball whiff rate is in the bottom quarter of qualified hitters".
 10. Describe where a player stands by comparing him with the qualified average and his rank or percentile, as shown in the packet.
 </rules>

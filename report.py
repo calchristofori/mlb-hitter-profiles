@@ -38,6 +38,8 @@ def build_system_prompt(version):
     if "{{METHOD}}" not in template:
         sys.exit(f"prompts/system_{version}.md has no {{{{METHOD}}}} placeholder.")
     method = (HERE / "hitter_evaluation.md").read_text().strip()
+    # Open questions to the author ("> **[Your call ...") are notes, not instructions.
+    method = "\n".join(l for l in method.splitlines() if not l.startswith("> **[Your call"))
     glossary = (HERE / "metrics.md").read_text().strip()
     return template.replace("{{METHOD}}", method).replace("{{GLOSSARY}}", glossary)
 

@@ -56,13 +56,13 @@ Direction comes from where the ball landed or was fielded (spray angle). "Pull s
 - **Pull%** — all pulled batted balls (including ground balls) ÷ batted balls with a direction. Approximate: runs about 4 pts above Savant because ground-ball direction is inferred from where the ball was fielded. Use for trends, not cross-source comparisons.
 - **Oppo%** — same, to the opposite field. Approximate: about 2 pts above Savant.
 
-## Swing decisions
+## Plate discipline
 
 "In the zone" means any part of the ball touches the strike zone: the 17-inch plate width and the batter's own zone top and bottom, widened by the ball's radius (1.45 in) on every side. This is Savant's definition. Swings include swinging strikes, fouls, foul tips, balls in play and bunt attempts.
 
 - **IZ Swing%** — swings ÷ pitches in the zone. Within ~0.2 pts of Savant on average.
 - **Chase%** — swings ÷ pitches outside the zone (Savant: O-Swing%). Within ~0.25 pts of Savant on average; 92% of qualified hitters within 1 pt.
-- **IZ Swing − Chase** — IZ Swing% minus Chase%, shown as a decimal (.360 = 36.0 points). A house swing-decision score: higher is better. Not a public stat.
+- **IZ Swing − Chase** — IZ Swing% minus Chase%, shown as a decimal (.360 = 36.0 points). Generally, higher is better: a hitter who attacks pitches in the zone and lays off pitches outside it. It is not a swing-decision score: it does not account for count, pitch quality or location within the zone, so it shows how a hitter's swings split between strikes and balls, not how good each decision was. Read it with IZ Swing% and Chase% to see what drives it. Not a public stat.
 - **Whiff%** — misses ÷ swings. Foul tips count as misses, as on Savant. Matches Savant.
 
 ## Speed
