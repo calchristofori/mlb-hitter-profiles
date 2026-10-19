@@ -8,7 +8,7 @@ also becomes an interactive page: charts and tables drawn by code, with Claude's
 ```
 name → data.py (data packet) ─┐
                               ├→ report.py → Claude (claude-opus-5-5) → reports/<player>_<time>.md + .json
-prompts/system_vN.md ─────────┤                        └→ html_report.py → reports/html/<player>.html
+prompts/system_vN.md ─────────┤                        └→ html_report.py → docs/<player>.html
   + hitter_evaluation.md      │
   + metrics.md ───────────────┘
 ```
@@ -39,11 +39,12 @@ The API key is read from `.env` (`ANTHROPIC_API_KEY=...`). Never commit or share
 | `data.py` | Builds the data packet from the `mlb` Postgres database. No AI: same name in, same numbers out. All math (averages, ranks, percentiles, changes) happens here. |
 | `report.py` | Assembles the system prompt, sends it with the packet to Claude, streams the report, and saves it with a `.json` record (prompt, model, tokens, cost, packet). Reuses a matching saved report instead of paying for a new one. Then builds the page. |
 | `html_report.py` + `templates/report.html` | The interactive page: percentile chart with a season switch, shaded season tables, platoon and pitch-type charts, hover definitions. Every number comes from the database, not from the model. |
+| `docs/` | The website, published by GitHub Pages at https://calchristofori.github.io/mlb-hitter-profiles/: one page per player plus a home page listing them. Rebuilt on every report run. |
 | `visuals.py` | The same charts and tables as static images, for places that can't show the page (Substack). |
 | `prompts/system_vN.md` | The system prompt, versioned. `{{METHOD}}` and `{{GLOSSARY}}` are filled in at run time. v5 is current (it tells Claude the page shows the numbers, so the text explains them). |
 | `hitter_evaluation.md` | The evaluation method: the baseball judgment behind every report. |
 | `metrics.md` | The metric glossary: what each number means, how it's computed, and how it compares with Savant and FanGraphs. The single source of truth for definitions. |
-| `reports/` | Every report written. `.json` records stay local (not committed). `reports/html/` holds the pages, `reports/visuals/` the images. |
+| `reports/` | Every report written. `.json` records stay local (not committed). `reports/visuals/` holds the static images. |
 | `validation/` | Checks the database against MLB, Savant and FanGraphs: `bash validation/fetch_sources.sh 2023 2026`, then `.venv/bin/python -I validation/validate.py 2023 2026`. |
 | `learn/data_annotated.py` | A heavily commented copy of `data.py`, with a Python primer, for reading. Doesn't update itself. |
 | `archive/desktop_prototype/` | The earlier Claude Desktop (MCP) version. Not maintained. |

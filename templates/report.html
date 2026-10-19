@@ -115,6 +115,7 @@ td[tabindex] { cursor: default; }
 /* Footer */
 footer { color: var(--muted); font-size: 13px; display: grid; gap: 8px; border-top: 1px solid var(--rule); padding-top: 18px; }
 footer p { margin: 0; max-width: 70em; }
+footer a { color: var(--accent); }
 
 /* Hover card */
 #tip { position: fixed; z-index: 20; max-width: 280px; background: var(--ink); color: var(--paper); border-radius: 8px;
@@ -348,7 +349,8 @@ function renderSections() {
 }
 
 $("#foot").innerHTML = `${S.notes ? `<div>${S.notes}</div>` : ""}
-  <p>Every number, chart and table on this page is computed by code from a pitch-by-pitch MLB database (data through ${esc(P.dataThrough)}). The writing is by Claude, working only from the same numbers. Expected stats (xwOBA, xBA, xISO) come from a house model. Report: ${esc(D.report.source)}.</p>`;
+  <p>Every number, chart and table on this page is computed by code from a pitch-by-pitch MLB database (data through ${esc(P.dataThrough)}). The writing is by Claude, working only from the same numbers. Expected stats (xwOBA, xBA, xISO) come from a house model.</p>
+  <p><a href="index.html">All hitter profiles</a> · <a href="__REPO__">How these reports are built</a> (the method, the prompt and the code)</p>`;
 
 function renderAll() { readPalette(); renderSeg(); renderBars(); renderSections(); }
 renderAll();

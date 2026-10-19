@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Scouting-style MLB hitter profiles: charts computed from pitch-by-pitch data, written by Claude.">
+<meta property="og:title" content="MLB Hitter Profiles">
+<meta property="og:description" content="Scouting-style MLB hitter profiles: charts computed from pitch-by-pitch data, written by Claude.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://calchristofori.github.io/mlb-hitter-profiles/">
+<style>
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; font: 14px/1.5 system-ui, -apple-system, sans-serif; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<title>MLB Hitter Profiles</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400&display=swap">
+<style>
+:root { --bg: #f4f5f7; --paper: #ffffff; --ink: #15181e; --muted: #5b6270; --rule: #e0e3e9; --accent: #1d3557;
+  --display: "Barlow Condensed", "Arial Narrow", Arial, sans-serif; --ui: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --prose: "Source Serif 4", Georgia, serif; }
+@media (prefers-color-scheme: dark) { :root { --bg: #0e1014; --paper: #161920; --ink: #e8eaef; --muted: #9ba2ae;
+  --rule: #2a2f39; --accent: #a9c1e3; color-scheme: dark; } }
+body { background: var(--bg); color: var(--ink); font-family: var(--ui); }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 40px 64px; display: grid; gap: 28px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font: 600 12px/1 var(--ui); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 700 clamp(42px, 8vw, 68px)/.95 var(--display); text-transform: uppercase; margin: 10px 0 14px; }
+.intro { font: 400 18px/1.55 var(--prose); max-width: 40em; margin: 0; }
+a { color: var(--accent); }
+.list { display: grid; gap: 12px; }
+.player { display: grid; gap: 6px; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px;
+  padding: 18px 22px; text-decoration: none; color: var(--ink); }
+.player:hover, .player:focus-visible { border-color: var(--accent); }
+.player:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pname { font: 600 28px/1 var(--display); text-transform: uppercase; }
+.pmeta { color: var(--muted); font-size: 13px; }
+.ptop { font: 400 16px/1.5 var(--prose); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Hitter profiles · built with the Claude API</div>
+    <h1>MLB Hitter Profiles</h1>
+    <p class="intro">Scouting-style profiles of MLB hitters. Every number and chart is computed by code from a
+    pitch-by-pitch database; the writing is by Claude, working only from those numbers and a written evaluation
+    method. <a href="https://github.com/calchristofori/mlb-hitter-profiles">See how it's built</a>.</p>
+  </header>
+  <div class="list">
+    <a class="player" href="wilyer-abreu.html">
+      <span class="pname">Wilyer Abreu</span>
+      <span class="pmeta">RF · Boston Red Sox · Age 27 · Bats L · 681 PA</span>
+      <span class="ptop">Abreu is a fly-ball power hitter who wins with launch more than exit velocity. He lifts the ball far more than most hitters and turns an above-average share of it into barrels. His value comes from extra-base damage, supported by league-average plate discipline that has cut his strikeouts each season.</span>
+    </a>
+  </div>
+</div>
+</body>
+</html>

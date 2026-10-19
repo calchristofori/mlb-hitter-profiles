@@ -5,7 +5,7 @@
 
 Flow: system prompt (prompts/system_<version>.md with the method inserted)
       + data packet (data.py) -> Claude (streamed) -> reports/<player>_<time>.md
-      -> interactive page with charts (html_report.py) -> reports/html/<player>.html
+      -> interactive page with charts (html_report.py) -> docs/<player>.html (the website)
 
 Every report is saved with a .json record of exactly what produced it (prompt
 version, model, effort, the packet, token use and cost). The evals use that record.

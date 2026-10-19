@@ -4,7 +4,12 @@
 
 Same rule as data.py: code computes, the model judges. The numbers, percentiles and
 league averages come from the database (the same queries as the data packet); the
-writing comes from the report Claude wrote. Output: reports/html/<player>.html
+writing comes from the report Claude wrote.
+
+Output goes to docs/, which GitHub Pages publishes as the website:
+    docs/<player>.html   the player's page
+    docs/index.html      home page listing every player (rebuilt from docs/players.json)
+    docs/img/            percentile chart image, used as the link preview (Substack, social)
 """
 
 import html
@@ -17,10 +22,30 @@ import psycopg
 from psycopg.rows import dict_row
 
 import data
+import visuals
 from data import fmt
 
 HERE = Path(__file__).resolve().parent
 TEMPLATE = HERE / "templates" / "report.html"
+SITE = HERE / "docs"
+SITE_URL = "https://calchristofori.github.io/mlb-hitter-profiles/"
+REPO_URL = "https://github.com/calchristofori/mlb-hitter-profiles"
+
+# The page template is written for the claude.ai preview, which supplies the document
+# shell. For the website, each page gets its own shell and the same base reset.
+SHELL_HEAD = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+{meta}
+<style>
+:root {{ color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }}
+body {{ margin: 0; font: 14px/1.5 system-ui, -apple-system, sans-serif; }}
+img {{ max-width: 100%; }}
+[hidden] {{ display: none !important; }}
+</style>
+"""
 MIN_PA_SHOWN = 100  # seasons below this are left out (no read, per the method)
 
 # (column, label, better direction, short definition for the hover card)
@@ -173,16 +198,101 @@ def parse_report(md):
     return title, sections
 
 
+def shell(head, body, title, description, image=None, url=None):
+    """A complete web page: document shell, link-preview tags, then the page itself."""
+    tags = [f'<meta name="description" content="{html.escape(description)}">',
+            f'<meta property="og:title" content="{html.escape(title)}">',
+            f'<meta property="og:description" content="{html.escape(description)}">',
+            '<meta property="og:type" content="article">']
+    if url:
+        tags.append(f'<meta property="og:url" content="{url}">')
+    if image:
+        tags += [f'<meta property="og:image" content="{image}">', '<meta name="twitter:card" content="summary_large_image">']
+    return SHELL_HEAD.format(meta="\n".join(tags)) + head + "\n</head>\n<body>\n" + body + "\n</body>\n</html>\n"
+
+
+def plain(html_text):
+    return re.sub(r"<[^>]+>", "", html_text).strip()
+
+
 def write(name, report_path):
     bundle = build(name, report_path)
+    p = bundle["player"]
+    slug = re.sub(r"[^a-z0-9]+", "-", p["name"].lower()).strip("-")
     page = TEMPLATE.read_text().replace("/*__DATA__*/null", json.dumps(bundle).replace("</", "<\\/"))
-    page = page.replace("__TITLE__", html.escape(bundle["player"]["name"]))
-    slug = re.sub(r"[^a-z0-9]+", "-", bundle["player"]["name"].lower()).strip("-")
-    out = HERE / "reports" / "html" / f"{slug}.html"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(page)
+    page = page.replace("__TITLE__", html.escape(p["name"])).replace("__REPO__", REPO_URL)
+    head, body = page.split('<div class="wrap">', 1)
+    body = '<div class="wrap">' + body
+
+    # Percentile chart image for the link preview.
+    (SITE / "img").mkdir(parents=True, exist_ok=True)
+    visuals.percentile_chart(visuals.fetch(name), SITE / "img" / f"{slug}-percentiles.png")
+
+    top = plain(bundle["report"]["sections"].get("top", ""))
+    out = SITE / f"{slug}.html"
+    out.write_text(shell(head, body, f"{p['name']} Hitter Profile", top,
+                         image=f"{SITE_URL}img/{slug}-percentiles.png", url=f"{SITE_URL}{slug}.html"))
+    update_index(slug, p, top, Path(report_path).name)
     return out
 
+
+# ---------------------------------------------------------------- home page
+
+def update_index(slug, p, top, source):
+    manifest_path = SITE / "players.json"
+    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    manifest[slug] = {"name": p["name"], "pos": p["pos"], "team": p["team"], "age": p["age"], "bats": p["bats"],
+                      "season": p["season"], "pa": p["pa"], "dataThrough": p["dataThrough"], "top": top,
+                      "source": source}
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+    (SITE / ".nojekyll").touch()  # serve files as they are, no GitHub build step
+
+    cards = "".join(f"""
+    <a class="player" href="{s}.html">
+      <span class="pname">{html.escape(m['name'])}</span>
+      <span class="pmeta">{html.escape(m['pos'])} · {html.escape(m['team'])} · Age {m['age']} · Bats {m['bats']} · {m['pa']} PA</span>
+      <span class="ptop">{html.escape(m['top'])}</span>
+    </a>""" for s, m in sorted(manifest.items(), key=lambda kv: kv[1]["name"].split()[-1]))
+    head = INDEX_HEAD
+    body = f"""<div class="wrap">
+  <header>
+    <div class="eyebrow">Hitter profiles · built with the Claude API</div>
+    <h1>MLB Hitter Profiles</h1>
+    <p class="intro">Scouting-style profiles of MLB hitters. Every number and chart is computed by code from a
+    pitch-by-pitch database; the writing is by Claude, working only from those numbers and a written evaluation
+    method. <a href="{REPO_URL}">See how it's built</a>.</p>
+  </header>
+  <div class="list">{cards}
+  </div>
+</div>"""
+    description = "Scouting-style MLB hitter profiles: charts computed from pitch-by-pitch data, written by Claude."
+    (SITE / "index.html").write_text(shell(head, body, "MLB Hitter Profiles", description, url=SITE_URL))
+
+
+INDEX_HEAD = """<title>MLB Hitter Profiles</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400&display=swap">
+<style>
+:root { --bg: #f4f5f7; --paper: #ffffff; --ink: #15181e; --muted: #5b6270; --rule: #e0e3e9; --accent: #1d3557;
+  --display: "Barlow Condensed", "Arial Narrow", Arial, sans-serif; --ui: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --prose: "Source Serif 4", Georgia, serif; }
+@media (prefers-color-scheme: dark) { :root { --bg: #0e1014; --paper: #161920; --ink: #e8eaef; --muted: #9ba2ae;
+  --rule: #2a2f39; --accent: #a9c1e3; color-scheme: dark; } }
+body { background: var(--bg); color: var(--ink); font-family: var(--ui); }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 40px 64px; display: grid; gap: 28px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font: 600 12px/1 var(--ui); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 700 clamp(42px, 8vw, 68px)/.95 var(--display); text-transform: uppercase; margin: 10px 0 14px; }
+.intro { font: 400 18px/1.55 var(--prose); max-width: 40em; margin: 0; }
+a { color: var(--accent); }
+.list { display: grid; gap: 12px; }
+.player { display: grid; gap: 6px; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px;
+  padding: 18px 22px; text-decoration: none; color: var(--ink); }
+.player:hover, .player:focus-visible { border-color: var(--accent); }
+.player:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pname { font: 600 28px/1 var(--display); text-transform: uppercase; }
+.pmeta { color: var(--muted); font-size: 13px; }
+.ptop { font: 400 16px/1.5 var(--prose); }
+</style>"""
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

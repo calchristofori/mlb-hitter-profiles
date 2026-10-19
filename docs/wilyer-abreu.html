@@ -1,3 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Abreu is a fly-ball power hitter who wins with launch more than exit velocity. He lifts the ball far more than most hitters and turns an above-average share of it into barrels. His value comes from extra-base damage, supported by league-average plate discipline that has cut his strikeouts each season.">
+<meta property="og:title" content="Wilyer Abreu Hitter Profile">
+<meta property="og:description" content="Abreu is a fly-ball power hitter who wins with launch more than exit velocity. He lifts the ball far more than most hitters and turns an above-average share of it into barrels. His value comes from extra-base damage, supported by league-average plate discipline that has cut his strikeouts each season.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://calchristofori.github.io/mlb-hitter-profiles/wilyer-abreu.html">
+<meta property="og:image" content="https://calchristofori.github.io/mlb-hitter-profiles/img/wilyer-abreu-percentiles.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; font: 14px/1.5 system-ui, -apple-system, sans-serif; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
 <title>Wilyer Abreu Hitter Profile</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -115,6 +133,7 @@ td[tabindex] { cursor: default; }
 /* Footer */
 footer { color: var(--muted); font-size: 13px; display: grid; gap: 8px; border-top: 1px solid var(--rule); padding-top: 18px; }
 footer p { margin: 0; max-width: 70em; }
+footer a { color: var(--accent); }
 
 /* Hover card */
 #tip { position: fixed; z-index: 20; max-width: 280px; background: var(--ink); color: var(--paper); border-radius: 8px;
@@ -125,6 +144,9 @@ footer p { margin: 0; max-width: 70em; }
 @media (prefers-reduced-motion: reduce) { .fill, .dot { transition: none; } }
 </style>
 
+
+</head>
+<body>
 <div class="wrap">
   <header>
     <div class="eyebrow" id="eyebrow"></div>
@@ -348,10 +370,14 @@ function renderSections() {
 }
 
 $("#foot").innerHTML = `${S.notes ? `<div>${S.notes}</div>` : ""}
-  <p>Every number, chart and table on this page is computed by code from a pitch-by-pitch MLB database (data through ${esc(P.dataThrough)}). The writing is by Claude, working only from the same numbers. Expected stats (xwOBA, xBA, xISO) come from a house model. Report: ${esc(D.report.source)}.</p>`;
+  <p>Every number, chart and table on this page is computed by code from a pitch-by-pitch MLB database (data through ${esc(P.dataThrough)}). The writing is by Claude, working only from the same numbers. Expected stats (xwOBA, xBA, xISO) come from a house model.</p>
+  <p><a href="index.html">All hitter profiles</a> · <a href="https://github.com/calchristofori/mlb-hitter-profiles">How these reports are built</a> (the method, the prompt and the code)</p>`;
 
 function renderAll() { readPalette(); renderSeg(); renderBars(); renderSections(); }
 renderAll();
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderAll);
 new MutationObserver(renderAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 </script>
+
+</body>
+</html>
