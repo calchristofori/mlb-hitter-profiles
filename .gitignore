@@ -1,0 +1,18 @@
+# Secrets — never commit
+.env
+
+# Python environment and caches (recreated automatically)
+.venv/
+__pycache__/
+
+# macOS
+.DS_Store
+
+# Downloaded reference data (re-fetch with validation/fetch_sources.sh)
+validation/downloads/
+
+# Report records: kept locally for evals (full prompt + packet); the .md reports are public
+reports/*.json
+
+# Old safety copies, superseded by git history
+prompts/.method_backup_*
