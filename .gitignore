@@ -16,3 +16,6 @@ reports/*.json
 
 # Old safety copies, superseded by git history
 prompts/.method_backup_*
+
+# Working notes, kept private
+drafts/

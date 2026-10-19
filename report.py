@@ -48,7 +48,7 @@ def build_user_message(player, packet):
             f"Write the hitter report on {player}.")
 
 
-def write_report(player, version="v2", effort="high"):
+def write_report(player, version="v3", effort="high"):
     system = build_system_prompt(version)
     packet = data.get_hitter_data(player)
     full_name = packet.splitlines()[0].removeprefix("# Data packet: ").strip()
@@ -122,7 +122,7 @@ def write_report(player, version="v2", effort="high"):
 def main():
     p = argparse.ArgumentParser(description="Write a hitter report with Claude.")
     p.add_argument("player")
-    p.add_argument("--prompt", default="v2", help="system prompt version (prompts/system_<v>.md)")
+    p.add_argument("--prompt", default="v3", help="system prompt version (prompts/system_<v>.md)")
     p.add_argument("--effort", default="high", choices=["low", "medium", "high", "xhigh", "max"])
     args = p.parse_args()
     try:

@@ -68,33 +68,3 @@ When two or more move together, flag it, with more weight for older hitters.
 | 200+ | Reliable read. |
 
 Always state PA for every season shown.
-
-## Priorities
-Profile, Skill breakdown and Performance by pitch type are the most important sections: they carry most of the report, roughly two-thirds of the words. Every other section is brief:
-- Bottom line: two or three sentences.
-- Three-year trend table: the table, plus one sentence on direction.
-- Underlying vs. results: one or two sentences.
-- Platoon splits: two or three sentences, unless the split defines the hitter.
-- Strengths and concerns: three short bullets each, with no new analysis; point back to the findings above.
-- Outlook: two or three sentences.
-- Sample and sources: a few short lines.
-
-## Report format
-1. Header — name, position, team, age, bats/throws
-2. Bottom line — the hitter in two or three sentences: how he drives value, his defining strength and his biggest vulnerability. Write last.
-3. Profile — hitter type and style (from the foundational metrics, batted-ball profile and approach)
-4. Three-year trend table — PA, xwOBA, EV90, Pulled Air%, IZ Swing% − Chase%, Whiff%, LA median, LA SD, with a direction column
-5. Underlying vs. results — wOBA vs. xwOBA
-6. Skill breakdown — contact quality, batted-ball profile, plate discipline
-7. Platoon splits — style and performance vs. RHP and LHP
-8. Performance by pitch type — damage and weaknesses by fastball / breaking / offspeed, and how pitchers attack him
-9. Strengths and concerns — three bullets each, every one backed by a number
-10. Outlook — trend direction and any aging/decline signals; the one thing to watch
-11. Sample and sources — PA by season and split, data dates, small-sample flags
-
-## Rules
-- Every number must come from the data, never from memory.
-- Separate what the data shows from your interpretation.
-- No 20–80 grades.
-- If data needed for a section is missing, say so instead of filling the gap.
-- Items marked *(when available)* depend on data that may not be collected yet. When it is missing, skip them without comment.
