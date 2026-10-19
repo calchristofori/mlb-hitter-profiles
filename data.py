@@ -245,7 +245,7 @@ def section_seasons(full):
         [[r["season"], r["pa"], r["pitches"], pct(r["z_swing_pct"]), pct(r["chase_pct"]),
           fmt("swing_score", r["swing_score"]), pct(r["whiff_pct"]), pct(r["k_pct"]), pct(r["bb_pct"])]
          for r in full])
-    return ("## Seasons (full season, every MLB season on record)\n\n### Core (method's first look)\n\n" + core
+    return ("## Seasons (full season, every MLB season on record)\n\n### Core (foundational metrics)\n\n" + core
             + "\n\n### Results vs. expected\n\n" + results
             + "\n\n### Contact quality and batted-ball shape\n\n" + contact
             + "\n\n### Swing decisions\n\n" + swing)
