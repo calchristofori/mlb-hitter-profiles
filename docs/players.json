@@ -34,5 +34,17 @@
     "dataThrough": "2026-09-27",
     "top": "Bellinger is a contact-and-launch hitter: he rarely misses, and he puts the ball in the air to his pull side at productive angles. Below-average exit velocity caps the damage, so his slightly above-average production comes through batting average rather than power.",
     "source": "cody-bellinger_20261019_183421.md"
+  },
+  "sal-frelick": {
+    "name": "Sal Frelick",
+    "pos": "RF",
+    "team": "Milwaukee Brewers",
+    "age": 26,
+    "bats": "L",
+    "season": 2026,
+    "pa": 384,
+    "dataThrough": "2026-09-27",
+    "top": "Frelick is a contact-first, ground-ball hitter who almost never misses but rarely hits the ball hard enough, or high enough, to do damage. His value rides on putting the ball in play and on above-average speed, and his output sagged in 2026 when the lift he found in 2025 went away.",
+    "source": "sal-frelick_20261020_010732.md"
   }
 }
