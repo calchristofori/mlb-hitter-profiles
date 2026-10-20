@@ -200,6 +200,19 @@ def fetch_league_pitch_groups(cur, season, min_pa):
     return add_derived(cur.fetchall())
 
 
+USAGE_MIN_PA = 300  # comparison group for platoon usage: hitters with this many PA who bat the same way
+
+
+def fetch_usage_league(cur, season, bats):
+    """Share of PA vs LHP for every hitter with USAGE_MIN_PA+ PA who bats the same way that season."""
+    cur.execute("""
+        SELECT l.pa::float / a.pa AS share
+        FROM main.batter_season a
+        JOIN main.batter_season l ON l.batter_id = a.batter_id AND l.season = a.season AND l.split = 'vs_lhp'
+        WHERE a.split = 'all' AND a.season = %s AND a.bats = %s AND a.pa >= %s""", (season, bats, USAGE_MIN_PA))
+    return [r["share"] for r in cur.fetchall()]
+
+
 def fetch_current_team(cur, player_id):
     """Latest 40-man roster row (players.current_team_name is often stale)."""
     cur.execute("""
@@ -330,6 +343,30 @@ def section_pitch_groups(groups, league, latest, min_pa):
     return "\n\n".join(parts)
 
 
+def section_usage(rows, usage_league):
+    """How often he faced left-handed pitching, by season, against hitters who bat the same way."""
+    out = []
+    for r in rows:
+        if r["lhp"] is None:
+            continue
+        share = r["lhp"] / r["pa"]
+        lg = usage_league.get(r["season"], [])
+        avg = sum(lg) / len(lg) if lg else None
+        # percentile of his share: 100 = faced lefties more often than any comparable hitter, 0 = least often
+        pctile = round(100 * sum(v < share for v in lg) / (len(lg) - 1)) if len(lg) > 1 else None
+        out.append([r["season"], r["bats"], r["pa"], r["lhp"], r["pa"] - r["lhp"], pct(share),
+                    pct(avg) if avg is not None else "—", len(lg), "—" if pctile is None else min(pctile, 100)])
+    if not out:
+        return ""
+    note = (f"Share of his PA that came against left-handed pitchers, compared with every hitter who bats the same "
+            f"way and had {USAGE_MIN_PA}+ PA that season. Percentile: 100 = faced lefties more often than any of "
+            "them, 0 = least often. A share well below hitters who bat the same way means he was kept away from "
+            "left-handers; a change across seasons means his role changed.")
+    return ("\n\n### Platoon usage (last three seasons)\n\n" + note + "\n\n"
+            + table(["Season", "Bats", "PA", "PA vs LHP", "PA vs RHP", "Share vs LHP",
+                     f"Avg share, same-handed hitters ({USAGE_MIN_PA}+ PA)", "Hitters compared", "Share percentile"], out))
+
+
 def section_splits(splits, season):
     label = {"vs_lhp": "vs LHP", "vs_rhp": "vs RHP"}
     if not splits:
@@ -352,6 +389,15 @@ def section_splits(splits, season):
 
 # ---------------------------------------------------------------- the packet
 
+def usage_rows(rows, full):
+    """PA and PA vs LHP for the last three seasons."""
+    out = []
+    for r in full[-3:]:
+        lhp = next((x for x in rows if x["season"] == r["season"] and x["split"] == "vs_lhp"), None)
+        out.append({"season": r["season"], "bats": r["bats"], "pa": r["pa"], "lhp": lhp["pa"] if lhp else None})
+    return out
+
+
 def get_hitter_data(name):
     """Return the data packet (markdown text) for one hitter."""
     with psycopg.connect(CONNINFO, autocommit=True, row_factory=dict_row) as conn, conn.cursor() as cur:
@@ -365,6 +411,8 @@ def get_hitter_data(name):
         groups = fetch_pitch_groups(cur, player["player_id"], latest["season"] - 2)
         league_groups = fetch_league_pitch_groups(cur, latest["season"], min_pa)
         data_through = fetch_data_through(cur, latest["season"])
+        usage = usage_rows(rows, full)
+        usage_league = {u["season"]: fetch_usage_league(cur, u["season"], u["bats"]) for u in usage}
 
     team_s = (f"{team['team_full_name']} (40-man roster as of {team['date']}, status: {team['status']})"
               if team else f"{latest['teams']} (from {latest['season']} stats; not on a current 40-man roster)")
@@ -387,13 +435,15 @@ def get_hitter_data(name):
         "- xISO is xSLG minus xBA (expected isolated power); ISO is SLG minus AVG.",
         "- IZ Swing - Chase is in-zone swing rate minus chase rate (generally higher is better). It is not a "
         "swing-decision score.",
+        "- Platoon usage compares his share of PA vs LHP with hitters who bat the same way; it shows how he "
+        "was deployed, not how well he hit.",
         "- Pull% and Oppo% are approximate (about 4 points above Statcast); fine for trends.",
         "- FB% uses the Statcast definition: popups are counted separately (PU%), so it runs well below FanGraphs' FB%.",
         "- Sprint speed: about 27 ft/s is average, 30+ elite.",
         "- Park factors are NOT in the database, so park effects cannot be checked.",
     ])
     return "\n\n".join([header, section_seasons(full), section_changes(full), section_league(latest, league, min_pa),
-                        section_splits(splits, latest["season"]),
+                        section_splits(splits, latest["season"]) + section_usage(usage, usage_league),
                         section_pitch_groups(groups, league_groups, latest, min_pa), notes]) + "\n"
 
 

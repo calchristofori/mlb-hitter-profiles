@@ -126,6 +126,8 @@ def build(name, report_path):
         league_groups = data.fetch_league_pitch_groups(cur, latest["season"], min_pa)
         team = data.fetch_current_team(cur, player["player_id"])
         data_through = data.fetch_data_through(cur, latest["season"])
+        usage_raw = data.usage_rows(rows, full)
+        usage_league = {u["season"]: data.fetch_usage_league(cur, u["season"], u["bats"]) for u in usage_raw}
 
     season = latest["season"]
     lg = leagues[season]
@@ -139,6 +141,16 @@ def build(name, report_path):
     platoon = [{"key": k, "label": lab, "pa": r["pa"], "stats": {c: stat(r, c, lg) for c in PLATOON}}
                for k, lab, r in [("lhp", "vs LHP", splits.get("vs_lhp")), ("rhp", "vs RHP", splits.get("vs_rhp")),
                                  ("all", "Overall", latest)] if r]
+
+    usage = []
+    for u in usage_raw:
+        lg = usage_league.get(u["season"], [])
+        if u["lhp"] is None or not lg:
+            continue
+        share, avg = u["lhp"] / u["pa"], sum(lg) / len(lg)
+        usage.append({"season": u["season"], "pa": u["pa"], "lhp": u["lhp"], "share": share, "shareV": fmt("pitch_share", share),
+                      "avg": avg, "avgV": fmt("pitch_share", avg), "n": len(lg), "bats": u["bats"],
+                      "p": min(100, round(100 * sum(v < share for v in lg) / (len(lg) - 1))) if len(lg) > 1 else None})
 
     pitch = []
     for g in data.PITCH_GROUPS:
@@ -164,7 +176,7 @@ def build(name, report_path):
                    "team": team["team_full_name"] if team else latest["teams"], "dataThrough": str(data_through)},
         "metrics": {c: {"label": m[0], "better": m[1], "def": m[2]} for c, m in METRICS.items()},
         "percentileGroups": PERCENTILE_GROUPS, "tables": TABLES, "platoonCols": PLATOON, "pitchCols": PITCH,
-        "seasons": seasons, "platoon": platoon, "pitch": pitch,
+        "seasons": seasons, "platoon": platoon, "usage": usage, "usageMinPa": data.USAGE_MIN_PA, "pitch": pitch,
         "report": {"title": title, "sections": sections, "source": Path(report_path).name},
     }
 

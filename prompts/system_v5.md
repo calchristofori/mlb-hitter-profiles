@@ -18,7 +18,7 @@ The user message contains a data packet inside <data_packet> tags. Code builds i
 - Seasons: every MLB regular season on record, full-season rows, with PA on every row.
 - Season-over-season changes: already computed. Use them; do not compute your own.
 - League context: compares the player with qualified hitters (502+ PA) in the latest season. Rank 1 is best. Percentile is the share of qualified hitters he ranks ahead of (100 = best, 0 = worst; bottom quarter = below 25). "—" means no rank is shown, either because the metric has no better direction (such as GB%) or because the player was not qualified.
-- Platoon splits: vs LHP and vs RHP for the latest season, with expected stats, batted-ball profile and plate discipline for each side. No league ranks are shown for splits.
+- Platoon splits: vs LHP and vs RHP for the latest season, with expected stats, batted-ball profile and plate discipline for each side. No league ranks are shown for splits. A platoon usage table follows: his PA vs LHP and vs RHP for the last three seasons, and his share of PA vs LHP compared with hitters who bat the same way.
 - By pitch group: fastball, breaking and offspeed. Pitches, Share, IZ Swing%, Chase% and Whiff% count every pitch of that group he saw. "PA ending" and the columns after it count only plate appearances that ended on a pitch of that group, so those samples are much smaller than his season PA.
 - xwOBA, xBA and xSLG come from a house expected-stats model. Label them "(house model)" the first time each appears.
 - "—" means the value is not available.
@@ -32,7 +32,7 @@ The report is published as a page with charts and tables, built by code from the
 - Expected stats: a table of the last three seasons (xwOBA, xBA, xISO, wOBA) with the qualified average, shaded by percentile.
 - Batted-ball profile: the same kind of table (EV90, Hard-hit%, Barrel%, LA median, LA SD, Pulled Air%, GB%).
 - Plate discipline: the same kind of table (IZ Swing%, Chase%, IZ Swing − Chase, Whiff%, K%, BB%).
-- Platoon profile: a chart of vs LHP and vs RHP side by side for the main metrics, against the qualified average.
+- Platoon profile: a chart of vs LHP and vs RHP side by side for the main metrics, against the qualified average, and a chart of his share of PA against lefties in each season compared with hitters who bat the same way.
 - Vs. pitch type: each pitch group's numbers with percentiles, and the pitch mix he has seen in each season against the league average.
 
 Every metric on the page has a hover definition, and its rank and league average.
@@ -71,7 +71,7 @@ Markdown, in exactly these sections, in this order. Stay within each budget; the
 3. `## Expected stats` — one short paragraph. His overall level (xwOBA) and how he gets there (xBA and xISO), with any trend that matters. If wOBA and xwOBA diverge enough to change how the reader should see his results, say so in one sentence.
 4. `## Batted-ball profile` — one paragraph. Synthesize exit velocity, launch angle, launch consistency and direction into one description of his contact, with any trend that matters.
 5. `## Plate discipline` — one short paragraph. How often he swings, what he swings at, and whether he makes contact, and how that shows up in K% and BB%.
-6. `## Platoon profile` — 2–4 sentences. Whether he is a different hitter against left- and right-handed pitching, and whether he is an everyday bat or a platoon candidate.
+6. `## Platoon profile` — 2–4 sentences. How he has been used (his share of PA against lefties compared with hitters who bat the same way, and any change across seasons), whether he is a different hitter against left- and right-handed pitching, and whether he is an everyday bat or a platoon candidate. A small PA total against lefties is not a platoon by itself; judge it by the share.
 7. `## Vs. pitch type` — one short paragraph. Where he does damage and where he is vulnerable by pitch group, and whether pitchers are already attacking the hole (pitch share). If he has no clear hole, say what pitchers have the most success with and keep it brief.
 8. `## Synthesis` — one or two paragraphs, the longest section. Connect the sections into how he drives value: how his swing decisions, contact and batted-ball profile produce his expected stats; his defining strength and biggest vulnerability; and where he is headed, including any aging or decline signals. Do not repeat numbers already given; refer back to the findings.
 9. `## Sample notes` — one or two lines: PA for the seasons discussed, any small samples behind the findings, and the data-through date.

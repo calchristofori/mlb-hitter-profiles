@@ -8,8 +8,8 @@
     "season": 2026,
     "pa": 681,
     "dataThrough": "2026-09-27",
-    "top": "Abreu is a fly-ball power hitter who wins with launch more than exit velocity. He lifts the ball far more than most hitters and turns an above-average share of it into barrels. His value comes from extra-base damage, supported by league-average plate discipline that has cut his strikeouts each season.",
-    "source": "wilyer-abreu_20261019_175144.md"
+    "top": "Abreu is a lift-and-barrel power hitter who gets his value from extra-base damage rather than batting average. His contact skills and swing rates are average, but he launches the ball well enough to rank near the top fifth of the league in expected power. In 2026 he moved from a platoon role to everyday at-bats and held his level.",
+    "source": "wilyer-abreu_20261020_011626.md"
   },
   "steven-kwan": {
     "name": "Steven Kwan",
@@ -20,8 +20,8 @@
     "season": 2026,
     "pa": 637,
     "dataThrough": "2026-09-27",
-    "top": "Kwan is an extreme contact-and-patience hitter who almost never misses, rarely chases and sprays consistent line drives to all fields without any exit velocity behind them. He drives value by getting on base through a high batting average and a rising walk rate, not by doing damage.",
-    "source": "steven-kwan_20261019_182941.md"
+    "top": "Kwan is an extreme contact-and-control hitter: he almost never chases or misses, and he repeats a line-drive launch better than anyone, but he hits the ball with the lowest exit velocity of any qualified hitter. His value comes from batting average and, increasingly, walks, with almost no power behind it.",
+    "source": "steven-kwan_20261020_012200.md"
   },
   "cody-bellinger": {
     "name": "Cody Bellinger",
@@ -32,8 +32,8 @@
     "season": 2026,
     "pa": 562,
     "dataThrough": "2026-09-27",
-    "top": "Bellinger is a contact-and-launch hitter: he rarely misses, and he puts the ball in the air to his pull side at productive angles. Below-average exit velocity caps the damage, so his slightly above-average production comes through batting average rather than power.",
-    "source": "cody-bellinger_20261019_183421.md"
+    "top": "Bellinger is a contact-and-launch hitter, not a slugger. He rarely misses and lifts the ball efficiently to his pull side, which produces slightly above-average output driven by batting average rather than extra-base damage.",
+    "source": "cody-bellinger_20261020_012257.md"
   },
   "sal-frelick": {
     "name": "Sal Frelick",
@@ -44,7 +44,7 @@
     "season": 2026,
     "pa": 384,
     "dataThrough": "2026-09-27",
-    "top": "Frelick is a contact-first, ground-ball hitter who almost never misses but rarely hits the ball hard enough, or high enough, to do damage. His value rides on putting the ball in play and on above-average speed, and his output sagged in 2026 when the lift he found in 2025 went away.",
-    "source": "sal-frelick_20261020_010732.md"
+    "top": "Frelick is a contact-first, ground-ball hitter whose value comes almost entirely from putting the ball in play: he rarely misses, rarely strikes out and rarely chases. What he does not do is drive the ball, and with modest exit velocity spent mostly on the ground, his expected output sits well below average.",
+    "source": "sal-frelick_20261020_011715.md"
   }
 }
