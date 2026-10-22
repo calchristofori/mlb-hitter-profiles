@@ -61,7 +61,7 @@ CONTEXT_METRICS = [
 
 # Same idea for the by-pitch-group league context.
 PITCH_GROUP_METRICS = [
-    ("Pitch share", "pitch_share", None),
+    ("Pitch share (rank 1 = saw it most)", "pitch_share", "most"),
     ("xwOBA (house)", "xwoba", "higher"),
     ("wOBA", "woba", "higher"),
     ("IZ Swing%", "z_swing_pct", None),
@@ -74,6 +74,12 @@ PITCH_GROUP_METRICS = [
     ("Barrel%", "barrel_pct", "higher"),
 ]
 PITCH_GROUPS = ["fastball", "breaking", "offspeed"]
+
+# The report is about the latest season; the two before it show what is changing.
+# Older seasons are left out so the model can't anchor on a past peak (agreed 2026-10-22).
+SEASONS_SHOWN = 3
+GROUP_TREND_METRICS = [("Share", "pitch_share"), ("Whiff%", "whiff_pct"), ("Chase%", "chase_pct"),
+                       ("xwOBA (house)", "xwoba"), ("EV90", "ev90")]
 
 # Season-over-season changes, computed here so the model never has to subtract.
 CHANGE_METRICS = [
@@ -264,28 +270,56 @@ def section_seasons(full):
         [[r["season"], r["pa"], r["pitches"], pct(r["z_swing_pct"]), pct(r["chase_pct"]),
           fmt("swing_score", r["swing_score"]), pct(r["whiff_pct"]), pct(r["k_pct"]), pct(r["bb_pct"])]
          for r in full])
-    return ("## Seasons (full season, every MLB season on record)\n\n### Core (foundational metrics)\n\n" + core
+    return ("## Seasons (full season, last three seasons)\n\n### Core (foundational metrics)\n\n" + core
             + "\n\n### Results vs. expected\n\n" + results
             + "\n\n### Contact quality and batted-ball shape\n\n" + contact
             + "\n\n### Plate discipline\n\n" + swing)
+
+
+def league_stat(player_row, league, col, better, qualified):
+    """(league average, rank text, percentile text) for one metric. "most" ranks like "higher"
+    but means saw it most often, not best."""
+    values = [r[col] for r in league if r[col] is not None]
+    avg = sum(values) / len(values) if values else None
+    mine = player_row[col]
+    if better and qualified and mine is not None:
+        rank = 1 + sum(v < mine if better == "lower" else v > mine for v in values)
+        # share of qualified hitters he ranks ahead of: 100 = best, 0 = worst
+        pctile = str(round(100 * (len(values) - rank) / (len(values) - 1))) if len(values) > 1 else "—"
+        return avg, f"{rank} of {len(values)}", pctile
+    return avg, "—", "—"
 
 
 def context_table(player_row, league, metrics, qualified):
     """Player value, league average and rank for each metric."""
     rows = []
     for label, col, better in metrics:
-        values = [r[col] for r in league if r[col] is not None]
-        avg = sum(values) / len(values) if values else None
-        mine = player_row[col]
-        if better and qualified and mine is not None:
-            rank = 1 + sum(v > mine if better == "higher" else v < mine for v in values)
-            rank_s = f"{rank} of {len(values)}"
-            # share of qualified hitters he ranks ahead of: 100 = best, 0 = worst
-            pctile_s = str(round(100 * (len(values) - rank) / (len(values) - 1))) if len(values) > 1 else "—"
-        else:
-            rank_s = pctile_s = "—"
-        rows.append([label, fmt(col, mine), fmt(col, avg), rank_s, pctile_s])
+        avg, rank_s, pctile_s = league_stat(player_row, league, col, better, qualified)
+        rows.append([label, fmt(col, player_row[col]), fmt(col, avg), rank_s, pctile_s])
     return table(["Metric", "Player", "Qualified avg", "Player rank", "Percentile"], rows)
+
+
+def streak(full, col):
+    """How a metric has moved across the seasons given, in words, so the model never
+    counts it: "rose 2 seasons in a row (2024 → 2026); up in 4 of 6 changes since 2020"."""
+    vals = [(r["season"], r[col]) for r in full if r[col] is not None]
+    if len(vals) < 2:
+        return "—"
+    def direction(a, b):  # compared at display precision, so a change shown as 0 is flat
+        shown = change(col, b, a)
+        return "flat" if re.fullmatch(r"[+-]?\.?0*\.?0+( pts)?", shown) else ("up" if shown.startswith("+") else "down")
+    dirs = [direction(a, b) for (_, a), (_, b) in zip(vals, vals[1:])]
+    last, n = dirs[-1], 1
+    while n < len(dirs) and dirs[-1 - n] == last:
+        n += 1
+    since = vals[-1 - n][0]
+    verb = {"up": "rose", "down": "fell", "flat": "flat"}[last]
+    if n == 1:
+        run = f"{verb} in {vals[-1][0]} only" if last != "flat" else f"flat in {vals[-1][0]}"
+    else:
+        run = f"{verb} {n} seasons in a row" if last != "flat" else f"flat {n} seasons in a row"
+    return (f"{run} ({since} → {vals[-1][0]}); up in {dirs.count('up')} of {len(dirs)} changes, "
+            f"down in {dirs.count('down')}, since {vals[0][0]}")
 
 
 def section_changes(full):
@@ -295,8 +329,12 @@ def section_changes(full):
         return "## Season-over-season changes\n\nOnly one MLB season on record."
     pairs = list(zip(recent, recent[1:]))
     headers = ["Metric"] + [f"{a['season']} → {b['season']}" for a, b in pairs]
-    rows = [[label] + [change(col, b[col], a[col]) for a, b in pairs] for label, col in CHANGE_METRICS]
-    note = ("Computed from the season rows above (later season minus earlier). "
+    headers.append("Trend (last three seasons)")
+    rows = [[label] + [change(col, b[col], a[col]) for a, b in pairs] + [streak(full, col)]
+            for label, col in CHANGE_METRICS]
+    note = ("Computed from the season rows above (later season minus earlier). The trend column covers the "
+            "last three seasons, short ones included; use it for any claim about streaks or how many seasons "
+            "something rose or fell. "
             "Rates in points of .001 (+.048); percentages in percentage points (+4.4 pts); EV90, LA and sprint speed in mph / degrees / ft/s. "
             "PA by season: " + ", ".join(f"{r['season']} {r['pa']}" for r in recent) + ".")
     return f"## Season-over-season changes\n\n{note}\n\n" + table(headers, rows)
@@ -309,6 +347,30 @@ def section_league(player_row, league, min_pa):
             "mean of their values. Rank 1 = best; shown only for metrics with a clear better direction"
             + ("." if qualified else f", and not shown here because this player had {player_row['pa']} PA (not qualified)."))
     return f"## {season} league context\n\n{note}\n\n" + context_table(player_row, league, CONTEXT_METRICS, qualified)
+
+
+HISTORY_SEASONS = SEASONS_SHOWN  # league context by season covers the same seasons
+
+
+def section_league_history(full, leagues):
+    """Player value, qualified average and percentile for each of the last three seasons."""
+    recent = [r for r in full[-HISTORY_SEASONS:] if r["season"] in leagues]
+    if len(recent) < 2:
+        return ""
+    headers = ["Metric"] + [f"{r['season']} {h}" for r in recent for h in ("player", "avg", "pctl")]
+    rows = []
+    for label, col, better in CONTEXT_METRICS:
+        row = [label]
+        for r in recent:
+            league, min_pa = leagues[r["season"]]
+            avg, _, pctile = league_stat(r, league, col, better, r["pa"] >= min_pa)
+            row += [fmt(col, r[col]), fmt(col, avg), pctile]
+        rows.append(row)
+    note = ("Each season's value, that season's qualified average and his percentile among that season's "
+            "qualified hitters (\"—\" = not qualified that season, or no better direction). Use this for any "
+            "comparison with the league in an earlier season. Seasons before "
+            f"{recent[0]['season']} have no league context, so do not compare them with the league.")
+    return "## League context by season\n\n" + note + "\n\n" + table(headers, rows)
 
 
 def section_pitch_groups(groups, league, latest, min_pa):
@@ -333,6 +395,14 @@ def section_pitch_groups(groups, league, latest, min_pa):
         "\"PA ending\" and everything after it count only plate appearances whose last pitch was in the group.",
         "### Seasons\n\n" + seasons,
     ]
+    trend_rows = []
+    for g in PITCH_GROUPS:
+        rows = [r for r in groups if r["pitch_group"] == g]
+        for label, col in GROUP_TREND_METRICS:
+            trend_rows.append([g, label, streak(rows, col)])
+    parts.append("### Trends by group (last three seasons)\n\nThe direction of each metric across the seasons "
+                 "above, per group. Use it for any claim about how a group changed.\n\n"
+                 + table(["Group", "Metric", "Trend"], trend_rows))
     for g in PITCH_GROUPS:
         mine = next((r for r in groups if r["season"] == season and r["pitch_group"] == g), None)
         if mine is None:
@@ -403,11 +473,12 @@ def get_hitter_data(name):
     with psycopg.connect(CONNINFO, autocommit=True, row_factory=dict_row) as conn, conn.cursor() as cur:
         player = resolve_player(cur, name)
         rows = fetch_seasons(cur, player["player_id"])
-        full = [r for r in rows if r["split"] == "all"]
+        full = [r for r in rows if r["split"] == "all"][-SEASONS_SHOWN:]
         latest = full[-1]
         splits = [r for r in rows if r["season"] == latest["season"] and r["split"] != "all"]
         team = fetch_current_team(cur, player["player_id"])
         league, min_pa = fetch_league(cur, latest["season"])
+        leagues = {r["season"]: fetch_league(cur, r["season"]) for r in full[-HISTORY_SEASONS:]}
         groups = fetch_pitch_groups(cur, player["player_id"], latest["season"] - 2)
         league_groups = fetch_league_pitch_groups(cur, latest["season"], min_pa)
         data_through = fetch_data_through(cur, latest["season"])
@@ -442,7 +513,9 @@ def get_hitter_data(name):
         "- Sprint speed: about 27 ft/s is average, 30+ elite.",
         "- Park factors are NOT in the database, so park effects cannot be checked.",
     ])
-    return "\n\n".join([header, section_seasons(full), section_changes(full), section_league(latest, league, min_pa),
+    history = section_league_history(full, leagues)
+    return "\n\n".join([header, section_seasons(full), section_changes(full), section_league(latest, league, min_pa)]
+                       + ([history] if history else []) + [
                         section_splits(splits, latest["season"]) + section_usage(usage, usage_league),
                         section_pitch_groups(groups, league_groups, latest, min_pa), notes]) + "\n"
 

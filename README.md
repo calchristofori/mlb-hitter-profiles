@@ -41,10 +41,11 @@ The API key is read from `.env` (`ANTHROPIC_API_KEY=...`). Never commit or share
 | `html_report.py` + `templates/report.html` | The interactive page: percentile chart with a season switch, shaded season tables, platoon and pitch-type charts, hover definitions. Every number comes from the database, not from the model. |
 | `docs/` | The website, published by GitHub Pages at https://calchristofori.github.io/mlb-hitter-profiles/: one page per player plus a home page listing them. Rebuilt on every report run. |
 | `visuals.py` | The same charts and tables as static images, for places that can't show the page (Substack). |
-| `prompts/system_vN.md` | The system prompt, versioned. `{{METHOD}}` and `{{GLOSSARY}}` are filled in at run time. v5 is current (it tells Claude the page shows the numbers, so the text explains them). |
+| `prompts/system_vN.md` | The system prompt, versioned. `{{METHOD}}` and `{{GLOSSARY}}` are filled in at run time. v8 is current: the report is about the latest season (the packet holds only the last three), cites about 20 numbers, and describes ranks in words. Chosen with the eval (see `evals/`). |
 | `hitter_evaluation.md` | The evaluation method: the baseball judgment behind every report. |
 | `metrics.md` | The metric glossary: what each number means, how it's computed, and how it compares with Savant and FanGraphs. The single source of truth for definitions. |
 | `reports/` | Every report written. `.json` records stay local (not committed). `reports/visuals/` holds the static images. |
+| `evals/` | The eval: are the reports good? `eval_plan.md` holds the test hitters, the answer key and the checklist; `run_eval.py` writes reports for each hitter (never published), scores them with code checks and an AI grader, and saves a scorecard to `evals/runs/<time>/`. Full run ~$5: `.venv/bin/python evals/run_eval.py`. |
 | `validation/` | Checks the database against MLB, Savant and FanGraphs: `bash validation/fetch_sources.sh 2023 2026`, then `.venv/bin/python -I validation/validate.py 2023 2026`. |
 | `learn/data_annotated.py` | A heavily commented copy of `data.py`, with a Python primer, for reading. Doesn't update itself. |
 | `archive/desktop_prototype/` | The earlier Claude Desktop (MCP) version. Not maintained. |

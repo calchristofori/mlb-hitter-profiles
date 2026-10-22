@@ -56,22 +56,24 @@ def build_user_message(player, packet):
 
 
 def fingerprint(system, packet, model, effort):
-    """Identifies everything that shapes a report: instructions, data, model and effort."""
+    """Identifies everything that shapes a report: instructions, data, model and effort.
+    The roster check date changes every day without changing the data, so it is left out."""
+    packet = re.sub(r"as of \d{4}-\d{2}-\d{2}, ", "", packet)
     return hashlib.sha256("\n\0".join([system, packet, model, effort]).encode()).hexdigest()[:16]
 
 
 def find_saved(slug, fp):
-    """The newest saved report with this fingerprint, or None. Older records without a
-    stored fingerprint are matched from the prompt and packet they saved."""
+    """The newest saved report with this fingerprint, or None. Fingerprints are recomputed
+    from the prompt and packet each record saved, so older records match too."""
     for path in sorted((HERE / "reports").glob(f"{slug}_*.json"), reverse=True):
         r = json.loads(path.read_text())
-        saved = r.get("fingerprint") or fingerprint(r["system_prompt"], r["packet"], r["model_requested"], r["effort"])
+        saved = fingerprint(r["system_prompt"], r["packet"], r["model_requested"], r["effort"])
         if saved == fp and path.with_suffix(".md").exists():
             return path.with_suffix(".md")
     return None
 
 
-def write_report(player, version="v5", effort="high", fresh=False):
+def write_report(player, version="v8", effort="high", fresh=False):
     system = build_system_prompt(version)
     packet = data.get_hitter_data(player)
     full_name = packet.splitlines()[0].removeprefix("# Data packet: ").strip()
@@ -88,9 +90,32 @@ def write_report(player, version="v5", effort="high", fresh=False):
         return saved
 
     user = build_user_message(full_name, packet)
-
-    client = anthropic.Anthropic()
     print(f"Writing report on {full_name} — {MODEL}, effort {effort}, prompt {version}\n", file=sys.stderr)
+    message, text, thinking, cost = generate(system, user, effort)
+    usage = message.usage
+
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    out_dir = HERE / "reports"
+    out_dir.mkdir(exist_ok=True)
+    md_path = out_dir / f"{slug}_{stamp}.md"
+    md_path.write_text(text + "\n")
+    record = make_record(full_name, version, fp, system, effort, message, cost, text, thinking, packet)
+    md_path.with_suffix(".json").write_text(json.dumps(record, indent=2))
+
+    print(f"\nSaved {md_path.relative_to(HERE)} (+ .json) · {usage.input_tokens:,} in / "
+          f"{usage.output_tokens:,} out tokens · ${cost:.3f} · {record['report_words']} words",
+          file=sys.stderr)
+
+    # The page: charts and tables drawn by code from the database, with the report's text.
+    page = html_report.write(full_name, md_path)
+    print(f"Page: {page.relative_to(HERE)}", file=sys.stderr)
+    return md_path
+
+
+def generate(system, user, effort, echo=True):
+    """The one call to Claude. Returns (message, report text, thinking summary, cost in $).
+    echo=False keeps it quiet (the evals run several at once)."""
+    client = anthropic.Anthropic()
 
     # Streaming: text is printed as it is generated. Thinking happens first (a
     # summary is kept for the record, not printed). fallbacks="default" retries on
@@ -106,15 +131,18 @@ def write_report(player, version="v5", effort="high", fresh=False):
         fallbacks="default",
     ) as stream:
         for event in stream:
+            if not echo:
+                continue
             if event.type == "content_block_start" and event.content_block.type == "thinking":
                 print("[thinking…]\n", file=sys.stderr, flush=True)
             elif event.type == "content_block_delta" and event.delta.type == "text_delta":
                 print(event.delta.text, end="", flush=True)
         message = stream.get_final_message()
-    print()
+    if echo:
+        print()
 
     if message.stop_reason == "refusal":
-        sys.exit(f"The model declined: {message.stop_details}")
+        raise RuntimeError(f"The model declined: {message.stop_details}")
     if message.stop_reason == "max_tokens":
         print("Warning: hit max_tokens; the report is cut off.", file=sys.stderr)
 
@@ -122,13 +150,13 @@ def write_report(player, version="v5", effort="high", fresh=False):
     thinking = "\n\n".join(b.thinking for b in message.content if b.type == "thinking" and b.thinking)
     usage = message.usage
     cost = (usage.input_tokens * PRICE_PER_MTOK["input"] + usage.output_tokens * PRICE_PER_MTOK["output"]) / 1e6
+    return message, text, thinking, cost
 
-    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_dir = HERE / "reports"
-    out_dir.mkdir(exist_ok=True)
-    md_path = out_dir / f"{slug}_{stamp}.md"
-    md_path.write_text(text + "\n")
-    record = {
+
+def make_record(full_name, version, fp, system, effort, message, cost, text, thinking, packet):
+    """The .json record of exactly what produced a report."""
+    usage = message.usage
+    return {
         "player": full_name,
         "created": datetime.now().isoformat(timespec="seconds"),
         "prompt_version": version,
@@ -146,28 +174,18 @@ def write_report(player, version="v5", effort="high", fresh=False):
         "thinking_summary": thinking,
         "packet": packet,
     }
-    md_path.with_suffix(".json").write_text(json.dumps(record, indent=2))
-
-    print(f"\nSaved {md_path.relative_to(HERE)} (+ .json) · {usage.input_tokens:,} in / "
-          f"{usage.output_tokens:,} out tokens · ${cost:.3f} · {record['report_words']} words",
-          file=sys.stderr)
-
-    # The page: charts and tables drawn by code from the database, with the report's text.
-    page = html_report.write(full_name, md_path)
-    print(f"Page: {page.relative_to(HERE)}", file=sys.stderr)
-    return md_path
 
 
 def main():
     p = argparse.ArgumentParser(description="Write a hitter report with Claude.")
     p.add_argument("player")
-    p.add_argument("--prompt", default="v5", help="system prompt version (prompts/system_<v>.md)")
+    p.add_argument("--prompt", default="v8", help="system prompt version (prompts/system_<v>.md)")
     p.add_argument("--effort", default="high", choices=["low", "medium", "high", "xhigh", "max"])
     p.add_argument("--fresh", action="store_true", help="write a new report even if a matching one is saved")
     args = p.parse_args()
     try:
         write_report(args.player, args.prompt, args.effort, args.fresh)
-    except ValueError as e:  # name not found / ambiguous
+    except (ValueError, RuntimeError) as e:  # name not found / ambiguous, or the model declined
         sys.exit(str(e))
 
 

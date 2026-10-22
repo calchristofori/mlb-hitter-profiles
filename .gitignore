@@ -19,3 +19,8 @@ prompts/.method_backup_*
 
 # Working notes, kept private
 drafts/
+
+# Eval runs: keep only each run's scorecard in git
+evals/runs/*/*
+!evals/runs/*/scorecard.md
+evals/runs/*.log
