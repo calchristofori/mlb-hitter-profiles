@@ -46,7 +46,7 @@ The API key is read from `.env` (`ANTHROPIC_API_KEY=...`). Never commit or share
 | `metrics.md` | The metric glossary: what each number means, how it's computed, and how it compares with Savant and FanGraphs. The single source of truth for definitions. |
 | `reports/` | Every report written. `.json` records stay local (not committed). `reports/visuals/` holds the static images. |
 | `evals/` | The eval: are the reports good? `eval_plan.md` holds the test hitters, the answer key and the checklist; `run_eval.py` writes reports for each hitter (never published), scores them with code checks and an AI grader, and saves a scorecard to `evals/runs/<time>/`. Full run ~$5: `.venv/bin/python evals/run_eval.py`. |
-| `validation/` | Checks the database against MLB, Savant and FanGraphs: `bash validation/fetch_sources.sh 2023 2026`, then `.venv/bin/python -I validation/validate.py 2023 2026`. |
+| `validation/` | Checks the database against MLB, Savant and FanGraphs: `bash validation/fetch_sources.sh 2023 2026`, then `.venv/bin/python -I validation/validate.py 2023 2026`. To check one hitter's packet number by number (free, ~10 s): `.venv/bin/python -I validation/audit_packet.py "Kyle Schwarber"`, which writes a readable sheet to `validation/audits/`. It recomputes every packet table without `data.py`'s code, rebuilds his rows from the raw pitches, and compares them with Savant and FanGraphs. |
 | `learn/data_annotated.py` | A heavily commented copy of `data.py`, with a Python primer, for reading. Doesn't update itself. |
 | `archive/desktop_prototype/` | The earlier Claude Desktop (MCP) version. Not maintained. |
 

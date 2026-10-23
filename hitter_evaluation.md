@@ -6,7 +6,18 @@ Evaluate the hitter systematically, using expected stats and batted-ball primiti
 ## The question every report answers
 Who is this hitter stylistically, what are his strengths and weaknesses, and how does he drive value?
 
-Build the answer in layers: expected stats, batted-ball profile, plate discipline, platoon profile and performance by pitch type. Then synthesize across all of them: what kind of hitter he is, how he wins, where he is vulnerable, and what is changing.
+Every report reaches four conclusions:
+1. **His type**: what kind of hitter he is, in a phrase a reader will remember ("damage over contact", "a contact hitter with no power").
+2. **How he wins**: the one or two skills that carry his value.
+3. **Where he is vulnerable**: the hole pitchers can use.
+4. **What is changing**: whether the profile is holding, growing or eroding.
+
+The layers below (expected stats, batted-ball profile, plate discipline, platoon profile and performance by pitch type) are where the evidence for those conclusions comes from. They are the order to read the data in, not the order to present it. Read every layer, then lead with the conclusions.
+
+## What counts as a finding
+A finding is a statement about what the hitter *does*: "he lifts the ball to his pull side and hits it hard", "he swings at strikes but misses too many of them". A metric is evidence for a finding, never the finding itself. "His EV90 is well above average" is a reading, not a finding; "he hits the ball as hard as almost anyone" is a finding, and EV90 is its proof.
+
+The method names many metrics so that the read is thorough. Use all of them to reach the read; the report states the read and cites only the one or two metrics that prove it. A supporting metric is worth mentioning only when it disagrees with the rest and changes the read.
 
 ## Foundational metrics
 Four metrics give a first, rounded view of the hitter. Each covers one dimension of the profile:
@@ -16,7 +27,7 @@ Four metrics give a first, rounded view of the hitter. Each covers one dimension
 3. **Pulled Air%** — *batted-ball tendency.* How often he hits the ball in the air to the pull side, where most damage happens.
 4. **IZ Swing% minus Chase%** — *plate discipline.* How well he attacks pitches in the zone and lays off pitches outside it; generally, higher is better. Read it with IZ Swing% and Chase% to see whether it reflects attacking strikes, taking them, or chasing.
 
-Read these four together before anything else. The steps below explain *why* they look the way they do.
+Read these four together before anything else. The steps below explain *why* they look the way they do. They are the starting point for the read, not a checklist for the report: cite one only when it proves a finding.
 
 ## Expected stats
 **xwOBA** (house model) is the best overall view of a hitter's underlying performance: what his quality of contact, strikeouts and walks should have produced, with outcome noise stripped out.
@@ -29,10 +40,10 @@ Read these four together before anything else. The steps below explain *why* the
 
 xISO should confirm what the batted-ball metrics show. A high EV90 and Pulled Air% should produce a high xISO. A high EV90 with a low xISO means power that isn't playing, usually because the ball is on the ground or going the other way.
 
-Read xBA and xISO together:
+Read xBA and xISO together. Each combination is a type; name it, and cite whichever of the two defines him:
 - High xBA, high xISO: a complete hitter who hits for average and power.
-- Low xBA, high xISO: damage over contact.
-- High xBA, low xISO: a contact or singles hitter whose value depends on batting average.
+- Low xBA, high xISO: damage over contact. *Proof:* xISO.
+- High xBA, low xISO: a contact or singles hitter whose value depends on batting average. *Proof:* xBA.
 - Low xBA, low xISO: little offensive value from contact.
 
 Lean on xISO over actual ISO, since actual ISO carries outcome noise.
@@ -48,14 +59,15 @@ A batted-ball profile has three core components: **exit velocity, launch angle a
 - **LA SD**: the context for the median. His typical deviation in launch angle, and a marker of launch consistency. A tight spread means he repeats his launch; a wide spread means more balls at both extremes, grounders and popups.
 - **Pull%**: a proxy for spray angle. How often he pulls the ball rather than using center and the opposite field. Pull% is approximate in this data, so read it as direction and against the league average, and use Pulled Air% for how often he pulls the ball in the air.
 
-No single one of these defines the profile; how they come together does. Synthesize EV90, LA median, LA SD and Pull% into one description of his batted-ball profile, for example:
-- **High EV90, high LA median, tight LA SD, pull-heavy:** the power profile. Hard contact, lifted consistently to the pull side.
-- **High EV90, low LA median:** real power spent on the ground.
-- **Modest EV90, productive LA median, tight LA SD:** damage through efficient launch, not high exit velocity.
-- **Wide LA SD:** good contact that's inconsistent. Some balls driven, many topped or popped up.
-- **Low EV90, low LA median, all fields:** a contact and speed profile.
+No single one of these defines the profile; how they come together does. Read EV90, LA median, LA SD and Pull% together and match them to a type. The type is the finding; the proof is the one or two metrics that make it:
+- **High EV90, high LA median, tight LA SD, pull-heavy:** the power profile. Hard contact, lifted consistently to the pull side. *Proof:* EV90 and Pulled Air%.
+- **High EV90, low LA median:** real power spent on the ground. *Proof:* EV90 against LA median or GB%.
+- **Modest EV90, productive LA median, tight LA SD:** damage through efficient launch, not high exit velocity. *Proof:* LA SD or Sweet spot%.
+- **High Pulled Air%, high PU%:** the lift is there, but he gets under the ball too often. A high PU% is the usual cost of an air-ball approach without enough exit velocity or a good enough angle. *Proof:* Pulled Air% and PU%.
+- **Wide LA SD:** good contact that's inconsistent. Some balls driven, many topped or popped up. *Proof:* LA SD.
+- **Low EV90, low LA median, all fields:** a contact and speed profile. *Proof:* EV90.
 
-Supporting evidence: Hard-hit%, Barrel% and Sweet spot% show how often contact turns into damage (a hitter can have a strong EV90 and still convert few batted balls into damage), and the ball-flight mix (GB%, LD%, FB%, PU%) confirms the launch profile.
+Supporting evidence: Hard-hit%, Barrel% and Sweet spot% show how often contact turns into damage (a hitter can have a strong EV90 and still convert few batted balls into damage), and the ball-flight mix (GB%, LD%, FB%, PU%) confirms the launch profile. Use them to confirm the type; mention one only when it disagrees with the type or sharpens it.
 
 ### Plate discipline
 The batted-ball profile describes what happens once the hitter makes contact. Plate discipline describes how he navigates the plate appearance: **how often he swings, what he swings at, and whether he makes contact when he does.**
@@ -68,7 +80,7 @@ The batted-ball profile describes what happens once the hitter makes contact. Pl
   - **Low Chase%, low IZ Swing%:** passivity, not discipline.
 - **K% and BB%** show how all of this turns into results.
 
-Synthesize these into one description of his discipline profile: how often he swings, what he swings at, and whether he makes contact.
+Synthesize these into one description of his approach, stated as behavior ("he attacks strikes, lays off balls and rarely misses"), not as a list of rates. Cite the one rate the description turns on, usually Whiff% or Chase%, and let K% and BB% show the result.
 
 Speed matters only when it changes the profile: when his legs add infield hits and extra bases, or when his value depends entirely on the bat.
 
@@ -85,12 +97,10 @@ Platoon performance is critical to understanding the full profile of the hitter.
 - Compare xwOBA and Whiff% for each group with the qualified average for that group. A weakness is a group where either ranks in the bottom quarter of qualified hitters. Check Chase% on that group too.
 - Can he handle all three groups, or is his performance weighted toward one? Can he hit fastballs?
 - Swing data (IZ Swing%, Chase%, Whiff%) counts every pitch, so its samples are large. Results data (xwOBA, Hard-hit%) counts only PA ending on that group, so its samples are small. A weakness is most convincing when both agree.
-- Pitch share shows how pitchers attack him. A share above average, or rising across seasons, means pitchers have noticed something.
+- Pitch share shows how he has been pitched: what he saw, not why. A share above average, or rising across seasons, toward the group that hurts him means his weakness is showing up in how he is pitched. Describe it as what he saw; the data holds no pitcher intent, so never claim pitchers "adjusted", "noticed" or "are attacking" him.
 
 ## 3. How does he win?
-How he drives value is the synthesis of every layer above. How often does he swing, what does he swing at, how often does he make contact, what does that contact look like, and how does that combination produce his xBA, xSLG, xISO and xwOBA? Find the one or two skills that carry his value.
-
-- **High Pulled Air%, high PU%:** the lift is there, but he gets under the ball too often. A high PU% is the usual cost of an air-ball approach without enough exit velocity or a good enough angle.
+This is the center of the profile; every other layer exists to answer it. How he drives value is the synthesis of every layer above. How often does he swing, what does he swing at, how often does he make contact, what does that contact look like, and how does that combination produce his xBA, xSLG, xISO and xwOBA? Find the one or two skills that carry his value, and say how they connect: for example, "he walks because he won't chase, and he does damage because what he does swing at, he lifts to the pull side".
 
 A strength is real when several metrics point the same way and the pattern holds across seasons. One standout number, or one season, is a lead, not a strength.
 

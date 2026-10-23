@@ -38,11 +38,12 @@ My read of each hitter, written before looking at any report. The grader checks 
 ### A. Checked by code (free, automatic, pass/fail)
 1. Every number in the report appears in the data packet.
 2. 600–800 words (about 750 is right).
-3. All sections present, in order.
-4. No banned wording: "swing-decision score", "force", "Interpretation:", bullet lists, 20–80 grades.
+3. All sections present, in order (the sections the prompt version asks for).
+4. No banned wording: "swing-decision score", "force", "Interpretation:", bullet lists, 20–80 grades, ranks cited as numbers ("127th of 135", "98th percentile").
 5. Never mentions the method, its bands or thresholds.
 6. "(house model)" label on the first xwOBA, xBA and xSLG.
 7. About 20 numbers, not 40: no more than 25 cited (title and Sample notes not counted).
+8. Not a stat walk: no more than 15% of sentences open with a metric as the subject ("His EV90 was...").
 
 ### B. Checked by an AI grader (pass/fail, with a one-line reason)
 1. **Top line is right:** the type and value driver match the answer key.
@@ -52,7 +53,7 @@ My read of each hitter, written before looking at any report. The grader checks 
 5. **Combinations read correctly** (e.g. low chase + high whiff ≠ good discipline).
 6. **No filler:** no metric singled out just to say it's average. One sentence saying a whole area is unremarkable is fine; listing several average metrics by name is filler.
 7. **Change over time:** decline signals flagged when two or more move together.
-8. **Synthesis connects** the sections instead of repeating them.
+8. **Findings connect** into how he drives value (the Synthesis, or How he does damage from v10 on) instead of repeating them.
 9. **Reads like a profile, not a stat list:** each sentence makes a point and uses a number or two as evidence.
 
 ### C. My own score (the gold standard)

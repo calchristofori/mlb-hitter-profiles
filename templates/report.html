@@ -79,6 +79,8 @@ h3 { font: 600 20px/1.1 var(--display); text-transform: uppercase; letter-spacin
 .prose { font: 400 17px/1.62 var(--prose); min-width: 0; }
 .prose p { margin: 0 0 1em; max-width: 36em; }
 .exhibit { min-width: 0; }
+.exhibits { display: grid; gap: 28px; min-width: 0; }
+@media (min-width: 861px) { .section .prose { position: sticky; top: 16px; } }
 .full .prose p { max-width: 42em; }
 @media (max-width: 860px) { .section { grid-template-columns: minmax(0, 1fr); } }
 
@@ -155,12 +157,7 @@ footer a { color: var(--accent); }
     <div class="pgroups" id="pgroups"></div>
   </section>
 
-  <section class="card section" id="sec-expected"></section>
-  <section class="card section" id="sec-batted"></section>
-  <section class="card section" id="sec-discipline"></section>
-  <section class="card section" id="sec-platoon"></section>
-  <section class="card section" id="sec-pitch"></section>
-  <section class="card full" id="sec-synthesis"></section>
+  <div id="sections"></div>
 
   <footer id="foot"></footer>
 </div>
@@ -330,13 +327,13 @@ let pitchTab = 0;
 function pitchExhibit() {
   const g = D.pitch;
   if (!g.length) return `<div class="exhibit"><p class="na">No pitch-group data.</p></div>`;
-  const tabs = `<div class="seg" role="tablist" aria-label="Pitch group">${g.map((x, i) =>
+  const tabs = `<div class="seg" id="pitch-tabs" role="tablist" aria-label="Pitch group">${g.map((x, i) =>
     `<button type="button" role="tab" id="tab-${x.group}" aria-selected="${i === pitchTab}" data-i="${i}">${x.group[0].toUpperCase() + x.group.slice(1)}<small>${x.pa} PA</small></button>`).join("")}</div>`;
   return `<div class="exhibit">${tabs}<div id="pitch-panel" role="tabpanel"></div><div id="pitch-mix"></div></div>`;
 }
 function renderPitchPanel() {
   const x = D.pitch[pitchTab];
-  document.querySelectorAll("#sec-pitch [role=tab]").forEach((b, i) => b.setAttribute("aria-selected", i === pitchTab));
+  document.querySelectorAll("#pitch-tabs [role=tab]").forEach((b, i) => b.setAttribute("aria-selected", i === pitchTab));
   $("#pitch-panel").innerHTML = `<p class="sub" style="margin:12px 0 4px">${x.pitches.toLocaleString()} ${x.group} pitches seen · ${x.pa} PA ended on one. Ranked vs. qualified hitters on ${x.group} pitches.</p>` +
     D.pitchCols.map(c => {
       const st = x.stats[c], p = st.p;
@@ -360,21 +357,43 @@ function renderMix() {
   });
   rows.push(bar(`${P.season} avg`, g.map(x => ({ raw: x.leagueShareRaw, v: x.leagueShare })),
     `<b>Qualified hitters, ${P.season}</b>` + g.map(x => `${x.group}: ${esc(x.leagueShare)}`).join("<br>")));
-  $("#pitch-mix").innerHTML = `<div class="mix"><h3>How pitchers attack him</h3>${rows.join("")}
+  $("#pitch-mix").innerHTML = `<div class="mix"><h3>Pitch mix he saw</h3>${rows.join("")}
     <div class="legend">${g.map((x, i) => `<span><span class="key" style="background:${colors[i]};border-radius:2px"></span>${x.group}</span>`).join("")}</div></div>`;
 }
 
+// Two report layouts. Reports from prompt v10 on answer questions, each drawing on several
+// exhibits; earlier reports follow the data tables one section per exhibit. A report is
+// shown in the layout its sections belong to.
+const expectedTable = () => seasonTable(D.tables.expected, ["PA", "pa"]);
+const battedTable = () => seasonTable(D.tables.batted, ["BBE", "bbe"]);
+const disciplineTable = () => seasonTable(D.tables.discipline, ["PA", "pa"]);
+const labeled = (title, html) => `<div><h3 class="lh">${esc(title)}</h3>${html}</div>`;
+const LAYOUTS = {
+  questions: [
+    ["damage", "How he does damage", () => labeled("Expected stats", expectedTable()) + labeled("Batted-ball profile", battedTable())],
+    ["pitchers", "How pitchers get him out", () => labeled("Plate discipline", disciplineTable()) + labeled("Vs. pitch type", pitchExhibit())],
+    ["usage", "How he's used", platoonChart],
+    ["headed", "Where he's headed", null],
+  ],
+  tables: [
+    ["expected", "Expected stats", expectedTable],
+    ["batted", "Batted-ball profile", battedTable],
+    ["discipline", "Plate discipline", disciplineTable],
+    ["platoon", "Platoon profile", platoonChart],
+    ["pitch", "Vs. pitch type", pitchExhibit],
+    ["synthesis", "Synthesis", null],
+  ],
+};
+
 function renderSections() {
-  $("#sec-expected").innerHTML = prose("expected", "Expected stats") + seasonTable(D.tables.expected, ["PA", "pa"]);
-  $("#sec-batted").innerHTML = prose("batted", "Batted-ball profile") + seasonTable(D.tables.batted, ["BBE", "bbe"]);
-  $("#sec-discipline").innerHTML = prose("discipline", "Plate discipline") + seasonTable(D.tables.discipline, ["PA", "pa"]);
-  $("#sec-platoon").innerHTML = prose("platoon", "Platoon profile") + platoonChart();
-  $("#sec-pitch").innerHTML = prose("pitch", "Vs. pitch type") + pitchExhibit();
-  $("#sec-pitch [role=tablist]")?.addEventListener("click", e => {
+  const layout = S.damage ? LAYOUTS.questions : LAYOUTS.tables;
+  $("#sections").innerHTML = layout.map(([key, title, exhibits]) => exhibits
+    ? `<section class="card section" id="sec-${key}">${prose(key, title)}<div class="exhibits">${exhibits()}</div></section>`
+    : `<section class="card full" id="sec-${key}">${prose(key, title)}</section>`).join("");
+  $("#pitch-tabs")?.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return; pitchTab = +b.dataset.i; renderPitchPanel();
   });
   if (D.pitch.length) { renderPitchPanel(); renderMix(); }
-  $("#sec-synthesis").innerHTML = prose("synthesis", "Synthesis");
 }
 
 $("#foot").innerHTML = `${S.notes ? `<div>${S.notes}</div>` : ""}

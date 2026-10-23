@@ -7,7 +7,7 @@
 
 The test hitters and the answer key are read from evals/eval_plan.md, so editing that
 file changes the eval. Each report is scored two ways:
-  A. code checks: free, automatic, pass/fail (numbers traceable, length, sections, wording)
+  A. code checks: free, automatic, pass/fail (numbers traceable, length, sections, wording, stat walk)
   B. an AI grader: one call per report, pass/fail with a one-line reason per check
 
 Eval reports are written to evals/runs/<time>/ only. They never reuse a saved report,
@@ -34,10 +34,22 @@ RUNS = HERE / "runs"
 GRADER_EFFORT = "medium"
 PARALLEL = 4  # reports written at the same time
 
-SECTIONS = ["Top line", "Expected stats", "Batted-ball profile", "Plate discipline",
-            "Platoon profile", "Vs. pitch type", "Synthesis", "Sample notes"]
 WORDS = (600, 800)  # agreed 2026-10-22: ~750 is the right length
 MAX_NUMBERS = 25    # numbers cited, title and Sample notes not counted; the prompt asks for about 20
+MAX_METRIC_LED = 0.15  # provisional, 2026-10-23: v8 reports ran 9-37%; share of sentences whose subject is a metric ("His EV90 was..."): a stat walk
+
+# Sentence openings that make a metric the subject. Built from the glossary's metric names plus
+# the plain-English names reports use for them.
+GLOSSARY_METRICS = [m for line in re.findall(r"^- \*\*([^*]+)\*\*", (HERE.parent / "metrics.md").read_text(), re.M)
+                    for m in line.split(", ")
+                    if m not in {"PA", "BBE", "Pitches", "Qualified", "Qualified avg", "Rank", "Percentile", "Age",
+                                 "Platoon splits", "Season-over-season change", "Pitch groups",
+                                 "Two ways of counting.", "Share", "PA ending", "AVG", "OBP", "SLG"}]
+PLAIN_METRICS = ["walk rate", "strikeout rate", "chase rate", "whiff rate", "swing-and-miss rate", "exit velocity",
+                 "launch angle", "launch spread", "launch median", "in-zone swing rate", "popup rate", "barrel rate",
+                 "ground-ball rate", "hard-hit rate", "sweet-spot rate", "sprint speed", "expected"]
+METRIC_LED = re.compile(r"^(?:his |the )?(?:" + "|".join(re.escape(m) for m in GLOSSARY_METRICS + PLAIN_METRICS)
+                        + r")(?![\w])", re.I)
 
 # Wording the system prompt rules out. (pattern, what it catches)
 BANNED = [
@@ -46,6 +58,12 @@ BANNED = [
     (r"Interpretation:", '"Interpretation:" label'),
     (r"^\s*[-*•] ", "bullet list"),
     (r"20[-–]80|\bgrades?\b", "scouting grades"),
+    # ranks are described in words from v10 on; "90th-percentile" (EV90's definition) is not matched
+    (r"\b\d+(?:st|nd|rd|th) (?:of \d+|percentile|among|in the league)"
+     r"|\b(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)"
+     r"(?: in the league| among|-highest|-lowest|-best|-worst)"
+     r"|\branked (?:\d+(?:st|nd|rd|th)|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\b",
+     "rank cited as a number"),
 ]
 # Signs the report is talking about its own instructions instead of the hitter.
 META = [
@@ -74,12 +92,24 @@ def load_plan():
 
 # ---------- A. code checks ----------
 
+def expected_sections(system):
+    """The section headings the prompt asks for, in order, read from its output format."""
+    return re.findall(r"`## (.+?)`", system.split("<output_format>")[-1])
+
+
+def sentences(text):
+    """Prose sentences of the report body, Sample notes left out."""
+    body = re.sub(r"^## Sample notes.*", "", body_of(text), flags=re.M | re.S)
+    prose = " ".join(l for l in body.splitlines() if l.strip() and not l.startswith("#"))
+    return [s for s in re.split(r"(?<=[.!?])\s+", prose) if s]
+
+
 def body_of(text):
     """The report without its title line (the title holds the name, age and position only)."""
     return text.split("\n", 1)[1] if "\n" in text else text
 
 
-def code_checks(text, packet):
+def code_checks(text, packet, sections):
     """{check: (passed, detail)}"""
     out = {}
 
@@ -98,7 +128,11 @@ def code_checks(text, packet):
     out["length"] = (WORDS[0] <= words <= WORDS[1], f"{words} words")
 
     found = re.findall(r"^##\s+(.+?)\s*$", text, re.M)
-    out["sections"] = (found == SECTIONS, "" if found == SECTIONS else "found: " + " / ".join(found))
+    out["sections"] = (found == sections, "" if found == sections else "found: " + " / ".join(found))
+
+    led = [s for s in sentences(text) if METRIC_LED.match(s)]
+    share = len(led) / max(len(sentences(text)), 1)
+    out["metric_led"] = (share <= MAX_METRIC_LED, f"{len(led)}/{len(sentences(text))} sentences open with a metric")
 
     body = body_of(text)
     hits = [label for pat, label in BANNED if re.search(pat, body, re.M | re.I)]
@@ -125,7 +159,7 @@ GRADER_CHECKS = {
     "sample_sizes": "Sample sizes are handled: a season or split under 100 PA gets no read; 100-200 PA is "
                     "flagged as tentative; pitch-group results with under 50 PA ending get no read. Pass if "
                     "no small sample is relevant and none is misused.",
-    "platoon_by_share": "The platoon section judges his role by his share of PA against lefties compared with "
+    "platoon_by_share": "The platoon discussion (Platoon profile, or How he's used) judges his role by his share of PA against lefties compared with "
                         "same-handed hitters, not by the raw PA count.",
     "combinations_read": "Metrics are read together correctly (e.g. low chase with high whiff is not good "
                          "discipline; high EV90 with low xISO is power that isn't playing). Fail on any misread.",
@@ -136,8 +170,9 @@ GRADER_CHECKS = {
     "reads_like_profile": "It reads like a scout's profile, not a stat list: each sentence makes a point about the "
                           "hitter and uses at most one or two numbers as evidence. Fail if sentences string several "
                           "stats together or walk through numbers one after another.",
-    "synthesis_connects": "The Synthesis connects findings into how he drives value, rather than repeating "
-                          "numbers and sentences from earlier sections.",
+    "synthesis_connects": "The report connects findings into how he drives value (in the Synthesis, or for a "
+                          "report without one, in How he does damage), showing how one skill explains another, "
+                          "rather than repeating numbers and sentences from other sections.",
 }
 
 GRADER_SYSTEM = """You grade hitter profiles written by another model. You are strict and specific.
@@ -205,7 +240,7 @@ def run_one(job):
             path.write_text(text + "\n")
             cost_file.write_text(f"{cost:.4f}")
 
-        checks = code_checks(text, packet)
+        checks = code_checks(text, packet, expected_sections(system))
         graded, grade_cost = grade(text, packet, key)
         result = {"hitter": full_name, "type": kind, "run": i, "file": path.name,
                   "words": len(text.split()), "report_cost": round(cost, 4), "grade_cost": round(grade_cost, 4),

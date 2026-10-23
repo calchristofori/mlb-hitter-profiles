@@ -89,9 +89,13 @@ TABLES = {
 }
 PLATOON = ["xwoba", "xba", "xiso", "ev90", "barrel_pct", "gb_pct", "chase_pct", "whiff_pct", "k_pct", "bb_pct"]
 PITCH = ["pitch_share", "chase_pct", "whiff_pct", "swing_score", "xwoba", "ev90", "barrel_pct"]
-SECTIONS = {"Top line": "top", "Expected stats": "expected", "Batted-ball profile": "batted",
-            "Plate discipline": "discipline", "Platoon profile": "platoon", "Vs. pitch type": "pitch",
-            "Synthesis": "synthesis", "Sample notes": "notes"}
+SECTIONS = {"Top line": "top", "Sample notes": "notes",
+            # prompt v10 on: sections answer questions
+            "How he does damage": "damage", "How pitchers get him out": "pitchers",
+            "How he's used": "usage", "Where he's headed": "headed",
+            # prompts v1-v9: one section per data table
+            "Expected stats": "expected", "Batted-ball profile": "batted", "Plate discipline": "discipline",
+            "Platoon profile": "platoon", "Vs. pitch type": "pitch", "Synthesis": "synthesis"}
 
 
 # ---------------------------------------------------------------- numbers
