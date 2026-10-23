@@ -41,14 +41,12 @@ The API key is read from `.env` (`ANTHROPIC_API_KEY=...`). Never commit or share
 | `html_report.py` + `templates/report.html` | The interactive page: percentile chart with a season switch, shaded season tables, platoon and pitch-type charts, hover definitions. Every number comes from the database, not from the model. |
 | `docs/` | The website, published by GitHub Pages at https://calchristofori.github.io/mlb-hitter-profiles/: one page per player plus a home page listing them. Rebuilt on every report run. |
 | `visuals.py` | The same charts and tables as static images, for places that can't show the page (Substack). |
-| `prompts/system_vN.md` | The system prompt, versioned. `{{METHOD}}` and `{{GLOSSARY}}` are filled in at run time. v8 is current: the report is about the latest season (the packet holds only the last three), cites about 20 numbers, and describes ranks in words. Chosen with the eval (see `evals/`). |
+| `prompts/system_vN.md` | The system prompt. `{{METHOD}}` and `{{GLOSSARY}}` are filled in at run time. v8 is the default and built the published pages. v10 is next: sections that answer questions (how he does damage, how pitchers get him out, how he's used, where he's headed) instead of one per data table; not yet the default. Older versions are in git history. |
 | `hitter_evaluation.md` | The evaluation method: the baseball judgment behind every report. |
 | `metrics.md` | The metric glossary: what each number means, how it's computed, and how it compares with Savant and FanGraphs. The single source of truth for definitions. |
-| `reports/` | Every report written. `.json` records stay local (not committed). `reports/visuals/` holds the static images. |
-| `evals/` | The eval: are the reports good? `eval_plan.md` holds the test hitters, the answer key and the checklist; `run_eval.py` writes reports for each hitter (never published), scores them with code checks and an AI grader, and saves a scorecard to `evals/runs/<time>/`. Full run ~$5: `.venv/bin/python evals/run_eval.py`. |
+| `reports/` | The reports behind the published pages. `.json` records stay local (not committed) and let `report.py` reuse a report instead of paying for a new one. `visuals.py` writes its images to `reports/visuals/`. |
+| `evals/` | The eval: are the reports good? `eval_plan.md` holds the test hitters, the answer key and the checklist; `run_eval.py` writes reports for each hitter (never published), scores them with code checks and an AI grader, and saves a scorecard to `evals/runs/<time>/`. Full run ~$6: `.venv/bin/python evals/run_eval.py --prompt v10`. The v8 scorecard is kept as the baseline. |
 | `validation/` | Checks the database against MLB, Savant and FanGraphs: `bash validation/fetch_sources.sh 2023 2026`, then `.venv/bin/python -I validation/validate.py 2023 2026`. To check one hitter's packet number by number (free, ~10 s): `.venv/bin/python -I validation/audit_packet.py "Kyle Schwarber"`, which writes a readable sheet to `validation/audits/`. It recomputes every packet table without `data.py`'s code, rebuilds his rows from the raw pitches, and compares them with Savant and FanGraphs. |
-| `learn/data_annotated.py` | A heavily commented copy of `data.py`, with a Python primer, for reading. Doesn't update itself. |
-| `archive/desktop_prototype/` | The earlier Claude Desktop (MCP) version. Not maintained. |
 
 ## Where the data comes from
 

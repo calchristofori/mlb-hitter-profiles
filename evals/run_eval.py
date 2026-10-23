@@ -3,7 +3,7 @@
     .venv/bin/python evals/run_eval.py                 # full run: 8 hitters x 3 reports (~$5)
     .venv/bin/python evals/run_eval.py --runs 1        # one report per hitter (~$2)
     .venv/bin/python evals/run_eval.py --hitters "Kyle Schwarber"   # just one hitter
-    .venv/bin/python evals/run_eval.py --prompt v4     # score another prompt version
+    .venv/bin/python evals/run_eval.py --prompt v10    # score another prompt version
 
 The test hitters and the answer key are read from evals/eval_plan.md, so editing that
 file changes the eval. Each report is scored two ways:
@@ -310,7 +310,7 @@ def main():
     p = argparse.ArgumentParser(description="Score hitter reports against the eval plan.")
     p.add_argument("--runs", type=int, default=3, help="reports per hitter")
     p.add_argument("--hitters", nargs="*", help="only these hitters (default: all in eval_plan.md)")
-    p.add_argument("--prompt", default="v5")
+    p.add_argument("--prompt", default="v8")
     p.add_argument("--effort", default="high", choices=["low", "medium", "high", "xhigh", "max"])
     p.add_argument("--resume", metavar="RUN_DIR", help="finish a run that stopped partway, e.g. evals/runs/20261022_160114_v5")
     args = p.parse_args()
